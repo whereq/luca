@@ -7,8 +7,8 @@ Updated continuously as work progresses.
 
 | Phase | What | Status | Notes |
 |---|---|---|---|
-| **0** | Scaffold repo (package.json, tsconfig.base, README, LICENSE, docs) | ✅ Done | engine-v0.1.0 tag, commit 18cb362 |
-| **1** | Extract `@luca-game/engine` from catobigato's `frontend/src/games/engine/` | ✅ Done | Tagged engine-v0.1.0, all 71 game tests pass |
+| **0** | Scaffold repo (package.json, tsconfig.base, README, LICENSE, docs) | ✅ Done | commit 18cb362 |
+| **1** | Extract `@luca-game/engine` from catobigato's `frontend/src/games/engine/` | ✅ Done | Tagged `engine-v0.1.0` (commit 967f346), all 71 game tests pass, catobigato consumes via `file:` dependency (v1.0.0.119) |
 | **2** | Extract `@luca-game/platform` (gallery, 28 games, CompletionClient interface) | 🟡 Next | See below |
 | **3** | Hosted platform service on Cloudflare Workers | ⏸ Deferred | Only when there's demand + resources |
 | **4** | Backend integration in catobigato (`/api/luca/v1/*`, per-game validators, db tables) | 🟢 After Phase 2 | Runs in same FastAPI container, same Postgres |
@@ -137,4 +137,5 @@ npm run test            # 28 + 18 + 25 game tests should all pass
 
 ## Last updated
 
-2026-06-28 — Phase 1 complete, Phase 2 starting.
+2026-06-28 — Phase 1 complete (engine-v0.1.0 tagged, catobigato
+shipped v1.0.0.119 consuming it). Phase 2 starting next.
