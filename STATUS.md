@@ -12,7 +12,15 @@ Updated continuously as work progresses.
 | **2** | Extract `@luca-game/platform` (gallery, 28 games, CompletionClient interface) | ✅ Done | Tagged `platform-v0.1.0` (commit 30838bf), all 71 game tests pass, catobigato consumes via `file:` dependency (next release) |
 | **3** | Hosted platform service on Cloudflare Workers | ⏸ Deferred | Only when there's demand + resources |
 | **4** | Backend integration in catobigato (`/api/luca/v1/*`, per-game validators, db tables) | 🟢 After Phase 2 | Runs in same FastAPI container, same Postgres |
-| **5** | Polish + publish to npm + GitHub Actions workflow | 🟢 After Phase 2 | |
+| **5** | Polish + publish to npm + GitHub Actions | 🟢 After Phase 4 | Will use `npm publish` on tag push |
+
+## Distribution workaround (until Phase 5)
+
+Until we publish to npm registry, consumers (catobigato) install
+via local `file:` paths. The platform tarball bundles the engine
+inside it (via `bundledDependencies`) so npm/yarn can resolve the
+chain without hitting the registry. Build script:
+`scripts/bundle-platform.mjs`. See [docs/DISTRIBUTION.md](./docs/DISTRIBUTION.md).
 
 ## Phase 2 — platform extraction
 
