@@ -23,13 +23,19 @@ import Sudoku from './games/sudoku/Sudoku'
 import TowersOfHanoi from './games/towers_of_hanoi/TowersOfHanoi'
 import SlidingBlocks from './games/sliding_blocks/SlidingBlocks'
 import Tangram from './games/tangram/Tangram'
+import BombDefuser from './games/bomb_defuser/BombDefuser'
+import Nim from './games/nim/Nim'
+import Induction from './games/induction/Induction'
+import MagicSquare from './games/magic_square/MagicSquare'
+import TurtleWalk from './games/turtle_walk/TurtleWalk'
+import Ichomp from './games/ichomp/Ichomp'
 
 // NOTE: The remaining 22 games in `games/<slug>/` are coming-soon.
 // They have working game logic and basic tests, but their React
 // components are placeholders. They will be re-exported from the
 // games barrel and routed here as each UI is built.
 
-/** Map slug → component. Only the 6 with real UIs. */
+/** Map slug → component. All currently-shipped games. */
 const EAGER_GAMES: Record<string, React.ComponentType> = {
   '2048': Game2048,
   'lights': LightsOut,
@@ -37,6 +43,12 @@ const EAGER_GAMES: Record<string, React.ComponentType> = {
   'towers_of_hanoi': TowersOfHanoi,
   'sliding_blocks':  SlidingBlocks,
   'tangram':         Tangram,
+  'bomb_defuser':    BombDefuser,
+  'nim':             Nim,
+  'induction':       Induction,
+  'magic_square':    MagicSquare,
+  'turtle_walk':     TurtleWalk,
+  'ichomp':          Ichomp,
 }
 
 export default function PlayPage() {

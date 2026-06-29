@@ -130,7 +130,7 @@ export function useGameController<
     }
     if (statusRef.current !== 'playing') {
       // Allow RESTART + PAUSE/RESUME regardless
-      if (action.type === 'PAUSE' || action.type === 'RESUME') {
+      if (action.type === 'PAUSE' || action.type === 'RESUME' || action.type === 'RESTART') {
         // fall through to logic
       } else {
         return  // can't dispatch other actions outside of playing

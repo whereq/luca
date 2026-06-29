@@ -71,7 +71,7 @@ export const GAMES: GameMeta[] = [
     icon: '💣',
     description:
       'Defuse the bomb before time runs out. Read cryptic clues and cut the right wire — alone or with a partner giving instructions.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -152,7 +152,7 @@ export const GAMES: GameMeta[] = [
     icon: '🍫',
     description:
       'Chomp\'s iOS cousin. A solo strategy variant with extra rules and escalating difficulty.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -161,7 +161,7 @@ export const GAMES: GameMeta[] = [
     icon: '🧲',
     description:
       'A logic puzzle about magnetic fields. Place the magnets to satisfy the constraints without breaking the field.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'hard',
   },
   {
@@ -179,7 +179,7 @@ export const GAMES: GameMeta[] = [
     icon: '🔮',
     description:
       'Fill the grid so every row, column, and diagonal sums to the same magic number. Find the pattern.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -206,7 +206,7 @@ export const GAMES: GameMeta[] = [
     icon: '🪨',
     description:
       'The classic strategy game. Take turns removing stones. The player who takes the last stone wins.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -278,7 +278,7 @@ export const GAMES: GameMeta[] = [
     icon: '🐢',
     description:
       'A Logo-style turtle that follows your commands. Draw shapes, solve mazes, teach the turtle to dance.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
