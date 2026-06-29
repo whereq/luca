@@ -109,31 +109,55 @@ function ChessBoard({
         <span className="che-value">{state.board.reduce((s, row) => s + row.reduce((a, p) => a + (p === "." ? 0 : (p === p.toUpperCase() ? PIECE_VALUES[p] || 0 : -(PIECE_VALUES[p.toUpperCase()] || 0))), 0), 0)}</span>
       </div>
 
-      <div className="che-grid">
-        {state.board.map((row, r) =>
-          row.map((sq, c) => {
-            const isLight = (r + c) % 2 === 0
-            const isSelected = selected && selected[0] === r && selected[1] === c
-            const isLegal = legalFromSelected.some(([mr, mc]) => mr === r && mc === c)
-            const piece = sq === "." ? null : sq
-            return (
-              <button
-                key={r + "," + c}
-                className={"che-cell" + (isLight ? " light" : " dark") + (isSelected ? " selected" : "") + (isLegal ? " legal" : "")}
-                onClick={() => handleClick(r, c)}
-                disabled={!interactive}
-              >
-                {piece && (
-                  <span className={"che-piece" + (piece === piece.toUpperCase() ? " white" : " black")}>
-                    {PIECE_GLYPHS[piece]}
-                  </span>
-                )}
-                {isLegal && !piece && <span className="che-legal-dot" />}
-                {isLegal && piece && <span className="che-legal-capture" />}
-              </button>
-            )
-          })
-        )}
+      <div className="che-board">
+        <div className="che-files-top">
+          {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map(f => (
+            <span key={f} className="che-file-label">{f}</span>
+          ))}
+        </div>
+        <div className="che-board-inner">
+          <div className="che-ranks-left">
+            {[8, 7, 6, 5, 4, 3, 2, 1].map(r => (
+              <span key={r} className="che-rank-label">{r}</span>
+            ))}
+          </div>
+          <div className="che-grid">
+            {state.board.map((row, r) =>
+              row.map((sq, c) => {
+                const isLight = (r + c) % 2 === 0
+                const isSelected = selected && selected[0] === r && selected[1] === c
+                const isLegal = legalFromSelected.some(([mr, mc]) => mr === r && mc === c)
+                const piece = sq === "." ? null : sq
+                return (
+                  <button
+                    key={r + "," + c}
+                    className={"che-cell" + (isLight ? " light" : " dark") + (isSelected ? " selected" : "") + (isLegal ? " legal" : "")}
+                    onClick={() => handleClick(r, c)}
+                    disabled={!interactive}
+                  >
+                    {piece && (
+                      <span className={"che-piece" + (piece === piece.toUpperCase() ? " white" : " black")}>
+                        {PIECE_GLYPHS[piece]}
+                      </span>
+                    )}
+                    {isLegal && !piece && <span className="che-legal-dot" />}
+                    {isLegal && piece && <span className="che-legal-capture" />}
+                  </button>
+                )
+              })
+            )}
+          </div>
+          <div className="che-ranks-right">
+            {[8, 7, 6, 5, 4, 3, 2, 1].map(r => (
+              <span key={r} className="che-rank-label">{r}</span>
+            ))}
+          </div>
+        </div>
+        <div className="che-files-bottom">
+          {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map(f => (
+            <span key={f} className="che-file-label">{f}</span>
+          ))}
+        </div>
       </div>
 
       {isSolved(state) && (
