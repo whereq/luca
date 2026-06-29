@@ -230,10 +230,10 @@ export const GAMES: GameMeta[] = [
   {
     slug: 'sliding_blocks',
     title: 'Sliding Blocks',
-    icon: '🧩',
+    icon: '⬜',
     description:
-      'The 15-puzzle. Slide the numbered tiles in order. Simpler than it sounds. Infuriating in practice.',
-    status: 'coming_soon',
+      'Slide the numbered tiles to arrange them in order. Tap a tile next to the empty space to slide it there. 3×3, 4×4, or 5×5 grid.',
+    status: 'playable',
     difficulty: 'easy',
   },
   {
