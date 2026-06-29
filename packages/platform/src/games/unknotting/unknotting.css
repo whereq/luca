@@ -1,0 +1,20 @@
+/* Unknotting - visual styles */
+.unknotting .uk-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding: 1rem; user-select: none; position: relative; }
+.unknotting .uk-info { display: flex; gap: 0.4rem; font-size: 0.85rem; padding: 0.3rem 0.8rem; background: rgba(255, 255, 255, 0.04); border-radius: 6px; }
+.unknotting .uk-label { opacity: 0.6; font-size: 0.75rem; }
+.unknotting .uk-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+.unknotting .uk-spacer { width: 1rem; }
+.unknotting .uk-display { font-size: 4rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.04); border-radius: 8px; min-width: 120px; text-align: center; }
+.unknotting .uk-twist { padding: 0.6rem 1.4rem; font-size: 0.95rem; font-weight: 600; border-radius: 6px; background: rgba(79, 158, 255, 0.9); color: white; border: none; cursor: pointer; }
+.unknotting .uk-twist:disabled { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.4); cursor: not-allowed; }
+.unknotting .uk-result { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; text-align: center; padding: 1.5rem; background: rgba(0, 0, 0, 0.9); border-radius: 12px; z-index: 10; animation: uk-result-appear 0.4s ease; }
+@keyframes uk-result-appear { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+.unknotting .uk-result.won .uk-result-title { color: #22c55e; font-size: 1.8rem; font-weight: 800; }
+.unknotting .uk-result.lost .uk-result-title { color: #f97316; font-size: 1.8rem; font-weight: 800; }
+.unknotting .uk-result button { margin-top: 0.5rem; padding: 0.5rem 1.4rem; font-size: 0.9rem; font-weight: 600; border-radius: 6px; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; }
+.unknotting .uk-onboard { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 11; cursor: pointer; }
+.unknotting .uk-onboard-inner { background: var(--bg, #1a1a1a); padding: 1.5rem 2rem; border-radius: 12px; max-width: 400px; text-align: center; display: flex; flex-direction: column; gap: 0.8rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); }
+.unknotting .uk-onboard-inner strong { font-size: 1.2rem; }
+.unknotting .uk-onboard-inner p { opacity: 0.85; line-height: 1.4; }
+.unknotting .uk-onboard-inner button { align-self: center; padding: 0.5rem 1.2rem; background: rgba(79, 158, 255, 0.9); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+.unknotting .game-engine-banner { display: none !important; }

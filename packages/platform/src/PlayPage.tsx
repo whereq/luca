@@ -29,13 +29,24 @@ import Induction from './games/induction/Induction'
 import MagicSquare from './games/magic_square/MagicSquare'
 import TurtleWalk from './games/turtle_walk/TurtleWalk'
 import Ichomp from './games/ichomp/Ichomp'
+import Mastermind from './games/mastermind/Mastermind'
+import Skyscrapers from './games/skyscrapers/Skyscrapers'
+import FruitSalad from './games/fruit_salad/FruitSalad'
+import SpiderWeb from './games/spider_web/SpiderWeb'
+import Floodfill from './games/floodfill/Floodfill'
+import Dots from './games/dots/Dots'
+import GeomeTree from './games/geometree/GeomeTree'
+import Mazes from './games/mazes/Mazes'
+import Sokoban from './games/sokoban/Sokoban'
+import Hackenbush from './games/hackenbush/Hackenbush'
+import KnotColouring from './games/knot_colouring/KnotColouring'
+import Unknotting from './games/unknotting/Unknotting'
+import Chess from './games/chess/Chess'
+import Chomp from './games/chomp/Chomp'
+import Calcrostic from './games/calcrostic/Calcrostic'
+import Packing from './games/packing/Packing'
 
-// NOTE: The remaining 22 games in `games/<slug>/` are coming-soon.
-// They have working game logic and basic tests, but their React
-// components are placeholders. They will be re-exported from the
-// games barrel and routed here as each UI is built.
-
-/** Map slug → component. All currently-shipped games. */
+/** Map slug → component. All 28 currently-shipped games. */
 const EAGER_GAMES: Record<string, React.ComponentType> = {
   '2048': Game2048,
   'lights': LightsOut,
@@ -49,6 +60,22 @@ const EAGER_GAMES: Record<string, React.ComponentType> = {
   'magic_square':    MagicSquare,
   'turtle_walk':     TurtleWalk,
   'ichomp':          Ichomp,
+  'mastermind':      Mastermind,
+  'skyscrapers':     Skyscrapers,
+  'fruit_salad':     FruitSalad,
+  'spider_web':      SpiderWeb,
+  'floodfill':       Floodfill,
+  'dots':            Dots,
+  'geometree':       GeomeTree,
+  'mazes':           Mazes,
+  'sokoban':         Sokoban,
+  'hackenbush':      Hackenbush,
+  'knot_colouring':  KnotColouring,
+  'unknotting':      Unknotting,
+  'chess':           Chess,
+  'chomp':           Chomp,
+  'calcrostic':      Calcrostic,
+  'packing':         Packing,
 }
 
 export default function PlayPage() {

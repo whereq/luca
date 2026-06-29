@@ -80,7 +80,7 @@ export const GAMES: GameMeta[] = [
     icon: '✖',
     description:
       'A daily math cross-number puzzle. Each row and column forms a true equation. Number to find the missing digits.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -89,7 +89,7 @@ export const GAMES: GameMeta[] = [
     icon: '♟',
     description:
       'The classic strategy game. Play against a friend locally, or test yourself against the built-in engine.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'hard',
   },
   {
@@ -98,7 +98,7 @@ export const GAMES: GameMeta[] = [
     icon: '🍫',
     description:
       'A poison-chocolate game. Take a bite, your opponent takes a bite. Whoever takes the poisoned corner loses.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -107,7 +107,7 @@ export const GAMES: GameMeta[] = [
     icon: '🔵',
     description:
       'Connect dots to form boxes. Each box you complete scores a point. Strategic territory control in 60 seconds.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -116,7 +116,7 @@ export const GAMES: GameMeta[] = [
     icon: '🟦',
     description:
       'Flood the board with one color at a time. Minimize the number of moves to fill the entire grid.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'easy',
   },
   {
@@ -125,7 +125,7 @@ export const GAMES: GameMeta[] = [
     icon: '🍓',
     description:
       'Match the fruits. A fast, family-friendly card-matching game with a little strategy mixed in.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'easy',
   },
   {
@@ -134,7 +134,7 @@ export const GAMES: GameMeta[] = [
     icon: '🌳',
     description:
       'Grow a tree of geometric shapes. Each branch follows a rule, and the tree scores based on how well the rule is followed.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -143,7 +143,7 @@ export const GAMES: GameMeta[] = [
     icon: '🌲',
     description:
       'Cut branches from a tree. Whoever makes the last cut wins. A combinatorial game with surprising strategy depth.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'hard',
   },
   {
@@ -170,7 +170,7 @@ export const GAMES: GameMeta[] = [
     icon: '🪢',
     description:
       'Colour the strands of a knot to show that two diagrams are equivalent. A hands-on intro to knot theory.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -188,7 +188,7 @@ export const GAMES: GameMeta[] = [
     icon: '🧠',
     description:
       'Crack the code. Logical deduction against the computer\'s hidden color sequence in as few guesses as possible.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -197,7 +197,7 @@ export const GAMES: GameMeta[] = [
     icon: '🌀',
     description:
       'A new maze every day. Navigate from start to finish. Traps, portals, and multi-level paths.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'easy',
   },
   {
@@ -215,7 +215,7 @@ export const GAMES: GameMeta[] = [
     icon: '📦',
     description:
       'Pack the boxes. A 2D bin-packing puzzle. Decide what goes in each box to fit the most while staying organized.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'hard',
   },
   {
@@ -224,7 +224,7 @@ export const GAMES: GameMeta[] = [
     icon: '🏙',
     description:
       'Place skyscrapers of different heights in the grid so the row and column clues match. A skyline from every angle.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -242,7 +242,7 @@ export const GAMES: GameMeta[] = [
     icon: '📦',
     description:
       'Push the boxes onto the targets. The classic warehouse keeper puzzle. Logic, not reflexes.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'hard',
   },
   {
@@ -251,7 +251,7 @@ export const GAMES: GameMeta[] = [
     icon: '🕸',
     description:
       'A web-building puzzle. Connect the threads without crossing them, or build the strongest web you can.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'medium',
   },
   {
@@ -287,7 +287,7 @@ export const GAMES: GameMeta[] = [
     icon: '🔗',
     description:
       'Untangle the knots. A hands-on puzzle about topology. Move, flip, and rotate the strands until they lie flat.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'hard',
   },
 ]
