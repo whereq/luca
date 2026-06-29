@@ -269,7 +269,7 @@ export const GAMES: GameMeta[] = [
     icon: '🗼',
     description:
       'Move the stack of disks from one peg to another, one at a time, never placing a larger disk on a smaller one.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'easy',
   },
   {
