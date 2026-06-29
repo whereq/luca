@@ -1,5 +1,9 @@
 # Luca
 
+[![npm](https://img.shields.io/npm/v/@luca-game/engine.svg)](https://www.npmjs.com/package/@luca-game/engine)
+[![npm](https://img.shields.io/npm/v/@luca-game/platform.svg)](https://www.npmjs.com/package/@luca-game/platform)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 > A small, open-source game platform: a generic engine for running
 > any kind of puzzle or strategy game in a browser, plus a curated
 > collection of games that use it.
@@ -24,6 +28,14 @@ Games are surprisingly hard to integrate well:
 - Multiple consumers (CatoBigato, third-party apps, future mobile) want the same games without re-implementing them.
 
 Luca splits along the line **"things every game needs"** (engine) vs **"the actual games and their gallery"** (platform). CatoBigato is one consumer; other apps can embed either layer.
+
+---
+
+## Status
+
+**v0.1.0 — public preview.** Both packages are published to the public npm
+registry under the `@luca-game` scope. See `docs/STATUS.md` for the
+roadmap.
 
 ---
 

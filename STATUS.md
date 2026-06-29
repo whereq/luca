@@ -3,7 +3,7 @@
 This document tracks what's done, what's in progress, and what's next.
 Updated continuously as work progresses.
 
-## Current phase: **Phase 2 → Phase 4 transition**
+## Current phase: **Phase 5 → catobigato switchover**
 
 | Phase | What | Status | Notes |
 |---|---|---|---|
@@ -16,11 +16,17 @@ Updated continuously as work progresses.
 
 ## Distribution workaround (until Phase 5)
 
-Until we publish to npm registry, consumers (catobigato) install
+~~Until we publish to npm registry, consumers (catobigato) install
 via local `file:` paths. The platform tarball bundles the engine
 inside it (via `bundledDependencies`) so npm/yarn can resolve the
 chain without hitting the registry. Build script:
-`scripts/bundle-platform.mjs`. See [docs/DISTRIBUTION.md](./docs/DISTRIBUTION.md).
+`scripts/bundle-platform.mjs`. See [docs/DISTRIBUTION.md](./docs/DISTRIBUTION.md).~~
+
+**Phase 5 done.** Packages are on the public npm registry under
+`@luca-game/engine` and `@luca-game/platform`. Consumers install
+with `npm install @luca-game/platform` and the `file:` workaround
+is no longer needed. The catobigato switchover to semver happens
+in the next catobigato release after this one.
 
 ## Phase 2 — platform extraction
 
@@ -145,7 +151,7 @@ npm run test            # 28 + 18 + 25 game tests should all pass
 
 ## Last updated
 
-2026-06-28 — Phase 2 complete (platform-v0.1.0 tagged). Catobigato
-shipped the platform package consumption; next release deletes
-the orphaned local games/ directories. Phase 4 (backend
-integration) starts after that.
+2026-06-28 — Phase 5 in progress: GitHub Actions workflow + package
+metadata ready. Awaiting npm account + NPM_TOKEN secret to publish
+v0.1.0. Catobigato smoke test (13/13) on prod confirms Phase 4
+backend integration is live.

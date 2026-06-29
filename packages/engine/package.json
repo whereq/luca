@@ -35,6 +35,19 @@
     "react-i18next": "^13.0.0",
     "typescript": "^5.3.0"
   },
-  "keywords": ["games", "engine", "state-machine", "react", "luca"],
-  "license": "MIT"
+  "keywords": ["games", "engine", "state-machine", "react", "luca", "open-source"],
+  "license": "MIT",
+  "author": "whereq <https://github.com/whereq>",
+  "homepage": "https://github.com/whereq/luca#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whereq/luca.git",
+    "directory": "packages/engine"
+  },
+  "bugs": {
+    "url": "https://github.com/whereq/luca/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
