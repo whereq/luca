@@ -144,7 +144,7 @@
   background: rgba(239, 68, 68, 0.3);
 }
 
-.sk-result-stay { .skyscrapers .sk-result {
+.skyscrapers .sk-result {
   position: absolute;
   inset: 0;
   display: flex;
