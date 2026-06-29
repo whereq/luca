@@ -257,10 +257,10 @@ export const GAMES: GameMeta[] = [
   {
     slug: 'tangram',
     title: 'Tangram',
-    icon: '🟦',
+    icon: '🔷',
     description:
       'Seven pieces, infinite shapes. Use the tangram to match the silhouette. Spatial reasoning at its purest.',
-    status: 'coming_soon',
+    status: 'playable',
     difficulty: 'easy',
   },
   {
