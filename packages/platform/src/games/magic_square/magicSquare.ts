@@ -22,31 +22,59 @@ export function magicConstant(n: number): number {
   return (n * (n * n + 1)) / 2
 }
 
-export function newPuzzle(size: number = 3, seed: number = 0): MagicSquareState {
-  // Start with the solved square, then "blank out" some cells.
-  // The player fills them in.
-  const grid = solvedGrid(size)
-  const prefilled = new Array(size * size).fill(true)
-  // Blank out (size^2 - 2*size) cells randomly; keep 2*size cells.
-  // (For 3x3, that's 9 - 6 = 3 blank, 6 prefilled.)
-  const toBlank = (size * size) - 2 * size
+/** Sizes we generate. Each has a distinct magic number (15, 34, 65) so the
+ *  puzzle — and the target — actually varies between games. */
+export const SIZES = [3, 4, 5] as const
+
+/** Apply one of the 8 dihedral symmetries (k = 0..7) to a magic square. Every
+ *  symmetry of a magic square is still magic, so this just gives variety
+ *  (otherwise the generators always produce the same square for a given size). */
+function applySymmetry(grid: Cell[], n: number, k: number): Cell[] {
+  const out = new Array<Cell>(n * n).fill(0)
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      let nr = r, nc = c
+      switch (k & 7) {
+        case 1: nr = c; nc = n - 1 - r; break               // rot90
+        case 2: nr = n - 1 - r; nc = n - 1 - c; break        // rot180
+        case 3: nr = n - 1 - c; nc = r; break                // rot270
+        case 4: nc = n - 1 - c; break                        // flip horizontal
+        case 5: nr = n - 1 - r; break                        // flip vertical
+        case 6: nr = c; nc = r; break                        // transpose
+        case 7: nr = n - 1 - c; nc = n - 1 - r; break        // anti-transpose
+        default: break                                       // identity
+      }
+      out[nr * n + nc] = grid[r * n + c]
+    }
+  }
+  return out
+}
+
+export function newPuzzle(size?: number, seed: number = Date.now()): MagicSquareState {
   let rng = (seed || 1) | 0
   const rand = () => {
     rng = (rng * 1103515245 + 12345) & 0x7fffffff
     return rng / 0x7fffffff
   }
-  const indices = Array.from({ length: size * size }, (_, i) => i)
-  // Fisher-Yates shuffle
+  // Random size (and therefore a varying magic number) unless one is forced.
+  const n = size ?? SIZES[Math.floor(rand() * SIZES.length)]
+
+  // Start from a solved square, vary it with a random symmetry, then blank
+  // out `n` cells for the player to fill (gentle, scales with size).
+  const grid = applySymmetry(solvedGrid(n), n, Math.floor(rand() * 8))
+  const prefilled = new Array(n * n).fill(true)
+  const toBlank = n
+
+  const indices = Array.from({ length: n * n }, (_, i) => i)
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(rand() * (i + 1))
     ;[indices[i], indices[j]] = [indices[j], indices[i]]
   }
   for (let i = 0; i < toBlank; i++) {
-    const idx = indices[i]
-    grid[idx] = 0
-    prefilled[idx] = false
+    grid[indices[i]] = 0
+    prefilled[indices[i]] = false
   }
-  return { size, grid, prefilled, moves: 0 }
+  return { size: n, grid, prefilled, moves: 0 }
 }
 
 export function solvedGrid(size: number): Cell[] {
@@ -76,47 +104,15 @@ function siameseOdd(n: number): Cell[] {
 }
 
 function doublyEven(n: number): Cell[] {
-  // Strachey method
+  // Diagonal-complement method (works for n divisible by 4). Number cells
+  // 1..n² row-major; on the diagonals of each 4×4 sub-block, replace the
+  // value v with its complement (n²+1 − v).
   const grid: Cell[] = new Array(n * n).fill(0)
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
-      const value = n * n - (n * r + c)
-      const inTL = r < n/4 && c < n/4
-      const inTR = r < n/4 && c >= 3*n/4
-      const inBL = r >= 3*n/4 && c < n/4
-      const inBR = r >= 3*n/4 && c >= 3*n/4
-      const inMidRow = r >= n/4 && r < 3*n/4
-      const inMidCol = c >= n/4 && c < 3*n/4
-      if (inTL || inTR || inBL || inBR) {
-        grid[r * n + c] = value
-      } else if (inMidRow || inMidCol) {
-        // Don't fill — leave as 0
-      } else {
-        grid[r * n + c] = value
-      }
-    }
-  }
-  // Fill the remaining (mid-band) cells
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      if (grid[r * n + c] === 0) {
-        const value = n * n - (n * r + c)
-        // Wait, this doesn't quite work. Let me redo:
-      }
-    }
-  }
-  // Simpler: use the "complement" method
-  for (let r = 0; r < n; r++) {
-    for (let c = 0; c < n; c++) {
-      const inMidRow = r >= n/4 && r < 3*n/4
-      const inMidCol = c >= n/4 && c < 3*n/4
-      if (inMidRow || inMidCol) {
-        // Place the original n*n+1-value here
-        // (these are the cells that are NOT in the corners above)
-        // For simplicity, use a different formula
-        const v = (n * r + c) + 1
-        grid[r * n + c] = v
-      }
+      const v = r * n + c + 1
+      const onDiag = r % 4 === c % 4 || (r % 4) + (c % 4) === 3
+      grid[r * n + c] = onDiag ? n * n + 1 - v : v
     }
   }
   return grid
@@ -166,7 +162,9 @@ function singlyEven(n: number): Cell[] {
 
 /** Try to set a cell. Returns the new state (or same on error). */
 export function setCell(state: MagicSquareState, idx: number, value: number): MagicSquareState {
+  if (idx < 0 || idx >= state.size * state.size) return state
   if (state.prefilled[idx]) return state
+  if (value < 0 || value > state.size * state.size) return state // 0 = clear
   const grid = state.grid.slice()
   grid[idx] = value
   return { ...state, grid, moves: state.moves + 1 }
@@ -179,6 +177,13 @@ export function isSolved(state: MagicSquareState): boolean {
   // Every cell filled?
   for (let i = 0; i < n * n; i++) {
     if (state.grid[i] === 0) return false
+  }
+  // Must be a permutation of 1..n² (each number exactly once) — not just any
+  // values that happen to sum right.
+  const seen = new Set(state.grid)
+  if (seen.size !== n * n) return false
+  for (let v = 1; v <= n * n; v++) {
+    if (!seen.has(v)) return false
   }
   // Rows
   for (let r = 0; r < n; r++) {

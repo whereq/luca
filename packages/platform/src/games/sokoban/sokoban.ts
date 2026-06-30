@@ -1,67 +1,125 @@
-// Sokoban — pure game logic (simplified).
+// Sokoban — pure game logic.
 //
-// Push boxes onto target squares. Move up/down/left/right. Can't
-// push two boxes at once, can't pull.
+// Push boxes onto target squares. Move up/down/left/right; you can push one
+// box at a time (never two in a row, never pull). Win when every target has a
+// box on it.
 //
-// Educational version: 5x5 grid with 2-3 boxes and 2-3 targets.
-//
-// All exports are PURE FUNCTIONS. No React, no DOM.
+// Walls, targets, boxes and the player are kept as SEPARATE layers — the old
+// single-grid model overwrote the target marker when a box was pushed onto it,
+// which made the win unreachable. All exports are PURE FUNCTIONS.
 
 export type SokobanState = {
   width: number
   height: number
-  /** Grid: 0 = floor, 1 = wall, 2 = box, 3 = target. */
-  grid: number[][]
-  /** Player position. */
+  walls: boolean[][]
+  targets: boolean[][]
+  boxes: boolean[][]
   player: [number, number]
   moves: number
 }
 
-export function newGame(seed: number = 0): SokobanState {
-  // Simple 5x5 layout
-  // W W W W W
-  // W . . . W
-  // W . B T W
-  // W . P . W
-  // W W W W W
-  return {
-    width: 5,
-    height: 5,
-    grid: [
-      [1, 1, 1, 1, 1],
-      [1, 0, 0, 0, 1],
-      [1, 0, 2, 3, 1],  // box at (2,2), target at (2,3)
-      [1, 0, 0, 0, 1],  // player at (3,2)
-      [1, 1, 1, 1, 1],
-    ],
-    player: [3, 2],
-    moves: 0,
-  }
+// Hand-designed levels (all verified solvable). Legend:
+//   #=wall  (space)=floor  .=target  $=box  *=box on target  @=player  +=player on target
+const LEVELS: string[][] = [
+  [
+    "#####",
+    "#@$.#",
+    "#####",
+  ],
+  [
+    "######",
+    "#@ $.#",
+    "######",
+  ],
+  [
+    "#####",
+    "#@  #",
+    "#$  #",
+    "#.  #",
+    "#####",
+  ],
+  [
+    "#######",
+    "#  .  #",
+    "# #$# #",
+    "#  @  #",
+    "#######",
+  ],
+  [
+    "######",
+    "#@ $.#",
+    "#  $.#",
+    "######",
+  ],
+  [
+    "#######",
+    "#@$  .#",
+    "#######",
+  ],
+]
+
+function emptyGrid(h: number, w: number): boolean[][] {
+  return Array.from({ length: h }, () => new Array<boolean>(w).fill(false))
 }
+
+export function parseLevel(rows: string[]): SokobanState {
+  const height = rows.length
+  const width = Math.max(...rows.map(r => r.length))
+  const walls = emptyGrid(height, width)
+  const targets = emptyGrid(height, width)
+  const boxes = emptyGrid(height, width)
+  let player: [number, number] = [0, 0]
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      const ch = rows[r][c] ?? "#" // pad short rows as wall
+      switch (ch) {
+        case "#": walls[r][c] = true; break
+        case ".": targets[r][c] = true; break
+        case "$": boxes[r][c] = true; break
+        case "*": boxes[r][c] = true; targets[r][c] = true; break
+        case "@": player = [r, c]; break
+        case "+": player = [r, c]; targets[r][c] = true; break
+        default: break // floor
+      }
+    }
+  }
+  return { width, height, walls, targets, boxes, player, moves: 0 }
+}
+
+export function newGame(seed: number = Date.now()): SokobanState {
+  const idx = Math.abs((seed || 1) | 0) % LEVELS.length
+  return parseLevel(LEVELS[idx])
+}
+
+export function newPuzzle(): SokobanState {
+  return newGame()
+}
+
+const inBounds = (s: SokobanState, r: number, c: number) =>
+  r >= 0 && r < s.height && c >= 0 && c < s.width
 
 export function move(state: SokobanState, dr: number, dc: number): SokobanState {
   const [pr, pc] = state.player
   const nr = pr + dr, nc = pc + dc
-  if (nr < 0 || nr >= state.height || nc < 0 || nc >= state.width) return state
-  if (state.grid[nr][nc] === 1) return state  // wall
-  // If box, try to push it
-  if (state.grid[nr][nc] === 2) {
+  if (!inBounds(state, nr, nc) || state.walls[nr][nc]) return state
+
+  if (state.boxes[nr][nc]) {
+    // Pushing a box: the cell beyond must be free (in bounds, no wall, no box).
     const br = nr + dr, bc = nc + dc
-    if (br < 0 || br >= state.height || bc < 0 || bc >= state.width) return state
-    if (state.grid[br][bc] !== 0 && state.grid[br][bc] !== 3) return state
-    const grid = state.grid.map(r => r.slice())
-    grid[br][bc] = 2
-    grid[nr][nc] = 0
-    return { ...state, grid, player: [nr, nc], moves: state.moves + 1 }
+    if (!inBounds(state, br, bc) || state.walls[br][bc] || state.boxes[br][bc]) return state
+    const boxes = state.boxes.map(row => row.slice())
+    boxes[nr][nc] = false
+    boxes[br][bc] = true
+    return { ...state, boxes, player: [nr, nc], moves: state.moves + 1 }
   }
   return { ...state, player: [nr, nc], moves: state.moves + 1 }
 }
 
+/** Solved when every target has a box on it. */
 export function isSolved(state: SokobanState): boolean {
-  // All boxes are on targets
   for (let r = 0; r < state.height; r++) {
     for (let c = 0; c < state.width; c++) {
-      if (state.grid[r][c] === 2) return false  // box not on target
+      if (state.targets[r][c] && !state.boxes[r][c]) return false
     }
   }
   return true
@@ -71,6 +129,19 @@ export function isLoss(_state: SokobanState): boolean {
   return false
 }
 
-export function newPuzzle(): SokobanState {
-  return newGame()
+/** Number of boxes currently sitting on a target (for a progress readout). */
+export function boxesOnTargets(state: SokobanState): number {
+  let n = 0
+  for (let r = 0; r < state.height; r++) {
+    for (let c = 0; c < state.width; c++) {
+      if (state.boxes[r][c] && state.targets[r][c]) n++
+    }
+  }
+  return n
+}
+
+export function targetCount(state: SokobanState): number {
+  let n = 0
+  for (const row of state.targets) for (const t of row) if (t) n++
+  return n
 }

@@ -17,16 +17,19 @@
   font-size: 0.85rem;
   padding: 0.3rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
+  border-radius: var(--r-1);
 }
 
 .dots .dots-label { opacity: 0.6; font-size: 0.75rem; }
-.dots .dots-value { font-weight: 600; font-variant-numeric: tabular-nums; }
-.dots .dots-spacer { width: 1rem; }
+.dots .dots-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+.dots .dots-value.dots-you { color: #4f9eff; }
+.dots .dots-value.dots-ai { color: #22c55e; }
+.dots .dots-spacer { width: 0.8rem; }
+.dots .dots-turn { font-size: 0.75rem; opacity: 0.7; min-width: 5.5em; text-align: right; }
 
 .dots .dots-grid {
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
+  border-radius: var(--r-1);
 }
 
 .dots .dots-grid svg {
@@ -44,7 +47,7 @@
   text-align: center;
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: dots-result-appear 0.4s ease;
 }
@@ -55,13 +58,15 @@
 }
 
 .dots .dots-result.won .dots-result-title { color: #22c55e; font-size: 1.8rem; font-weight: 800; }
+.dots .dots-result.lost .dots-result-title { color: #f97316; font-size: 1.8rem; font-weight: 800; }
+.dots .dots-result-msg { font-size: 1rem; opacity: 0.85; font-variant-numeric: tabular-nums; }
 
 .dots .dots-result button {
   margin-top: 0.5rem;
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -82,7 +87,7 @@
 .dots .dots-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -99,7 +104,7 @@
   background: rgba(79, 158, 255, 0.9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

@@ -1,11 +1,14 @@
 // Fruit Salad - game renderer.
+//
+// A contingency-table deduction puzzle: fill each bowl×fruit cell so every
+// bowl total (row clue) and every fruit total (column clue) is satisfied.
 
 import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { GameEngine, type GameRenderContext } from "@luca-game/engine"
 import {
   type FruitSaladState, type Fruit, FRUITS,
-  newGame, setGuess, isSolved, isLoss,
+  rowSums, colSums, MAX_COUNT, isSolved, isLoss,
 } from "./fruitSalad"
 import type { FruitSaladAction, FruitSaladStats } from "./fruitSaladDefinition"
 import { fruitSaladDefinition } from "./fruitSaladDefinition"
@@ -64,27 +67,15 @@ function FruitSaladBoard({
   }, [state.moves])
 
   const interactive = !isSolved(state) && !isLoss(state)
-  const numBowls = state.bowls.length
-  const numFruits = state.bowls[0]?.length ?? FRUITS.length
-  const knownTotals = state.bowls.map(row => row.reduce((a, b) => a + b, 0))
-
-  const handleBowlClick = (b: number) => {
-    if (!interactive) return
-    setSelectedBowl(b)
-  }
-
-  const handleFruitClick = (f: number) => {
-    if (!interactive) return
-    setSelectedFruit(f)
-  }
+  const numBowls = state.guess.length
+  const numFruits = state.guess[0]?.length ?? FRUITS.length
+  const rs = rowSums(state.guess)
+  const cs = colSums(state.guess)
 
   const handleSetCount = (count: number) => {
     if (selectedBowl === null || selectedFruit === null) return
     ctx.dispatch({ type: "SET", payload: { bowl: selectedBowl, fruit: selectedFruit, count } })
   }
-
-  const correctGuess = (bowlIdx: number, fruitIdx: number) =>
-    state.guess[bowlIdx][fruitIdx] === state.bowls[bowlIdx][fruitIdx]
 
   return (
     <div className="fs-wrap">
@@ -95,69 +86,79 @@ function FruitSaladBoard({
         }}>
           <div className="fs-onboard-inner">
             <strong>{t("games.fruit_salad.name", "Fruit Salad")}</strong>
-            <p>{t("games.fruit_salad.onboard", "Each bowl has a total count of fruit and a known count of one specific fruit. Figure out the rest by setting the count for each fruit-bowl pair.")}</p>
+            <p>{t("games.fruit_salad.onboard", "Each bowl shows how many pieces of fruit it needs (right edge), and each fruit shows how many there are in total (bottom row). Tap a cell and set its count so every bowl total and every fruit total turns green.")}</p>
             <button>{t("common.got_it", "Got it")}</button>
           </div>
         </div>
       )}
 
-      <div className="fs-grid">
+      <div className="fs-grid" style={{ ['--num-fruits' as string]: numFruits }}>
+        {/* Header row: corner, fruit icons, "Total" */}
         <div className="fs-corner" />
         {Array.from({ length: numFruits }, (_, f) => (
           <button
-            key={f}
+            key={"h" + f}
             className={"fs-fruit-header" + (selectedFruit === f ? " selected" : "")}
-            onClick={() => handleFruitClick(f)}
+            onClick={() => interactive && setSelectedFruit(f)}
             disabled={!interactive}
             title={FRUITS[f]}
           >
             <span className="fs-emoji">{FRUIT_EMOJI[FRUITS[f]]}</span>
           </button>
         ))}
-        <div className="fs-corner fs-total-h">Total</div>
+        <div className="fs-corner fs-total-h">{t("games.play.score", "Total")}</div>
+
+        {/* Bowl rows */}
         {Array.from({ length: numBowls }, (_, b) => {
-          const isSelected = selectedBowl === b
+          const rowOk = rs[b] === state.rowTotals[b]
           return (
-            <div key={b} className="fs-bowl">
+            <div key={"b" + b} className="fs-bowl">
               <button
-                className={"fs-bowl-label" + (isSelected ? " selected" : "")}
-                onClick={() => handleBowlClick(b)}
+                className={"fs-bowl-label" + (selectedBowl === b ? " selected" : "")}
+                onClick={() => interactive && setSelectedBowl(b)}
                 disabled={!interactive}
               >
-                Bowl {b + 1}
+                {t("games.fruit_salad.bowl", { defaultValue: "Bowl {{n}}", n: b + 1 })}
               </button>
               {Array.from({ length: numFruits }, (_, f) => {
                 const v = state.guess[b][f]
                 const isTarget = selectedBowl === b && selectedFruit === f
-                const isCorrect = v > 0 && correctGuess(b, f)
                 return (
                   <button
-                    key={f}
-                    className={
-                      "fs-cell"
-                      + (isTarget ? " target" : "")
-                      + (isCorrect ? " correct" : "")
-                    }
-                    onClick={() => { setSelectedBowl(b); setSelectedFruit(f) }}
+                    key={"c" + b + "_" + f}
+                    className={"fs-cell" + (isTarget ? " target" : "") + (v > 0 ? " filled" : "")}
+                    onClick={() => { if (interactive) { setSelectedBowl(b); setSelectedFruit(f) } }}
                     disabled={!interactive}
                   >
                     {v > 0 ? v : ""}
                   </button>
                 )
               })}
-              <div className="fs-bowl-sum">{state.guess[b].reduce((a, b2) => a + b2, 0)} / {knownTotals[b]}</div>
+              <div className={"fs-bowl-sum" + (rowOk ? " ok" : "")}>{rs[b]} / {state.rowTotals[b]}</div>
             </div>
           )
         })}
+
+        {/* Footer row: fruit (column) totals */}
+        <div className="fs-coltot-label">{t("games.fruit_salad.need", { defaultValue: "Need" })}</div>
+        {Array.from({ length: numFruits }, (_, f) => {
+          const colOk = cs[f] === state.colTotals[f]
+          return (
+            <div key={"ct" + f} className={"fs-bowl-sum fs-coltot" + (colOk ? " ok" : "")}>
+              {cs[f]} / {state.colTotals[f]}
+            </div>
+          )
+        })}
+        <div className="fs-corner" />
       </div>
 
-      {selectedBowl !== null && selectedFruit !== null && (
+      {selectedBowl !== null && selectedFruit !== null && interactive && (
         <div className="fs-palette">
           <div className="fs-palette-label">
-            How many {FRUIT_EMOJI[FRUITS[selectedFruit]]} in bowl {selectedBowl + 1}?
+            {FRUIT_EMOJI[FRUITS[selectedFruit]]} {t("games.fruit_salad.in_bowl", { defaultValue: "in bowl {{n}}", n: selectedBowl + 1 })}
           </div>
           <div className="fs-palette-buttons">
-            {Array.from({ length: knownTotals[selectedBowl] + 1 }, (_, i) => i).map(n => (
+            {Array.from({ length: MAX_COUNT + 1 }, (_, n) => n).map(n => (
               <button
                 key={n}
                 className={"fs-pal-btn" + (state.guess[selectedBowl][selectedFruit] === n ? " selected" : "")}
@@ -172,9 +173,9 @@ function FruitSaladBoard({
 
       {isSolved(state) && (
         <div className="fs-result won">
-          <div className="fs-result-title">You got it!</div>
-          <div className="fs-result-msg">All counts match.</div>
-          <button onClick={ctx.restart}>Play again</button>
+          <div className="fs-result-title">{t("games.fruit_salad.won", "You got it!")}</div>
+          <div className="fs-result-msg">{t("games.fruit_salad.won_msg", "Every total matches.")}</div>
+          <button onClick={ctx.restart}>{t("games.play.restart", "Play again")}</button>
         </div>
       )}
     </div>

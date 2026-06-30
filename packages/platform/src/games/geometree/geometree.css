@@ -17,7 +17,7 @@
   font-size: 0.85rem;
   padding: 0.3rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
+  border-radius: var(--r-1);
 }
 
 .geometree .gt-label { opacity: 0.6; font-size: 0.75rem; }
@@ -26,7 +26,7 @@
 
 .geometree .gt-svg {
   background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
+  border-radius: var(--r-1);
 }
 
 .geometree .gt-palette {
@@ -36,7 +36,7 @@
   gap: 0.4rem;
   padding: 0.6rem 0.9rem;
   background: rgba(79, 158, 255, 0.08);
-  border-radius: 8px;
+  border-radius: var(--r-1);
 }
 
 .geometree .gt-palette-label { font-size: 0.85rem; opacity: 0.8; }
@@ -45,7 +45,7 @@
 .geometree .gt-pal-btn {
   min-width: 30px;
   height: 30px;
-  border-radius: 4px;
+  border-radius: var(--r-1);
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.05);
   color: inherit;
@@ -56,6 +56,33 @@
 }
 
 .geometree .gt-pal-btn:hover { background: rgba(79, 158, 255, 0.2); border-color: rgba(79, 158, 255, 0.6); }
+
+.geometree .gt-input-row { display: flex; gap: 0.4rem; align-items: center; }
+.geometree .gt-input {
+  width: 72px;
+  height: 32px;
+  border-radius: var(--r-1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 0 0.4rem;
+}
+.geometree .gt-input:focus { outline: none; border-color: #4f9eff; background: rgba(79, 158, 255, 0.12); }
+.geometree .gt-set-btn {
+  height: 32px;
+  padding: 0 0.9rem;
+  border-radius: var(--r-1);
+  border: 1px solid rgba(79, 158, 255, 0.6);
+  background: rgba(79, 158, 255, 0.9);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.geometree .gt-set-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .geometree .gt-result {
   position: absolute;
@@ -68,7 +95,7 @@
   text-align: center;
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: gt-result-appear 0.4s ease;
 }
@@ -84,7 +111,7 @@
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -105,7 +132,7 @@
 .geometree .gt-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -122,7 +149,7 @@
   background: rgba(79, 158, 255, 0.9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

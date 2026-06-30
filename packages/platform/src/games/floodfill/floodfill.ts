@@ -17,7 +17,7 @@ export type FloodfillState = {
 export const COLORS = ['red', 'blue', 'green', 'yellow', 'orange', 'purple'] as const
 export type Color = typeof COLORS[number]
 
-export function newGame(size: number = 12, numColors: number = 4, seed: number = 0): FloodfillState {
+export function newGame(size: number = 12, numColors: number = 6, seed: number = 0): FloodfillState {
   let rng = (seed || Date.now()) | 0
   const rand = () => {
     rng = (rng * 1103515245 + 12345) & 0x7fffffff
@@ -82,6 +82,28 @@ export function isLoss(_state: FloodfillState): boolean {
 
 export function newPuzzle(): FloodfillState {
   return newGame()
+}
+
+/** Size of the flooded region anchored at the top-left (0,0) — i.e. how much
+ *  of the board the player currently controls. Used for a progress readout. */
+export function originRegionSize(state: FloodfillState): number {
+  const size = state.size
+  const target = state.grid[0][0]
+  const seen = Array.from({ length: size }, () => new Array(size).fill(false))
+  const queue: Array<[number, number]> = [[0, 0]]
+  seen[0][0] = true
+  let count = 0
+  while (queue.length > 0) {
+    const [r, c] = queue.shift()!
+    count++
+    for (const [nr, nc] of neighbors(size, r, c)) {
+      if (!seen[nr][nc] && state.grid[nr][nc] === target) {
+        seen[nr][nc] = true
+        queue.push([nr, nc])
+      }
+    }
+  }
+  return count
 }
 
 export function countColors(state: FloodfillState): Record<number, number> {

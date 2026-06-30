@@ -9,9 +9,9 @@
 // All exports are PURE FUNCTIONS. No React, no DOM.
 
 export type GeomeNode = {
-  /** 0 = leaf, 1+ = internal. */
+  /** Level from the root (0 = root). */
   depth: number
-  /** Children indices (for internal nodes). */
+  /** Children indices (for internal nodes); empty for leaves. */
   children: number[]
   /** The value (pre-filled or player input). */
   value: number | null
@@ -20,48 +20,40 @@ export type GeomeNode = {
 }
 
 export type GeomeTreeState = {
-  /** The tree. */
+  /** The tree, stored in heap/array order: node 0 is the root, and the
+   *  children of node i are 2i+1 and 2i+2. This matches the renderer's
+   *  layout exactly. */
   nodes: GeomeNode[]
   /** The relationship: 'sum' or 'product'. */
   relation: 'sum' | 'product'
   moves: number
 }
 
-/** Build a balanced tree of `depth` levels. depth=0 is just a leaf. */
-export function newGame(depth: number = 3, seed: number = 0, relation: 'sum' | 'product' = 'sum'): GeomeTreeState {
-  let rng = (seed || Date.now()) | 0
+/** Build a full binary tree with `depth+1` levels (depth=3 → 4 levels, 8
+ *  leaves, 15 nodes), in heap order. The leaves are given; the player fills
+ *  in every internal node so each parent equals the sum/product of its two
+ *  children. The solution is unique and computable bottom-up. */
+export function newGame(depth: number = 3, seed: number = Date.now(), relation: 'sum' | 'product' = 'sum'): GeomeTreeState {
+  let rng = (seed || 1) | 0
   const rand = () => {
     rng = (rng * 1103515245 + 12345) & 0x7fffffff
     return rng / 0x7fffffff
   }
+  const total = 2 ** (depth + 1) - 1
   const nodes: GeomeNode[] = []
-  // Generate leaves first (depth = 0)
-  const leafCount = 2 ** depth
-  for (let i = 0; i < leafCount; i++) {
-    nodes.push({
-      depth: 0,
-      children: [],
-      value: relation === 'sum' ? 1 + Math.floor(rand() * 9) : 2 + Math.floor(rand() * 5),
-      prefilled: true,
-    })
-  }
-  // Build internal nodes (depth 1, 2, ..., depth)
-  for (let d = 1; d <= depth; d++) {
-    const nodesAtPrevLevel = 2 ** (depth - d + 1)
-    for (let i = 0; i < nodesAtPrevLevel / 2; i++) {
-      // Children are at level depth-(d+1)+1 = depth-d
-      const childBase = i * 2
-      nodes.push({
-        depth: d,
-        children: [childBase, childBase + 1],
-        value: null,  // player fills in
-        prefilled: false,
-      })
+  for (let i = 0; i < total; i++) {
+    const left = 2 * i + 1
+    const right = 2 * i + 2
+    const level = Math.floor(Math.log2(i + 1))
+    if (left < total) {
+      // Internal node — player fills it in.
+      nodes.push({ depth: level, children: [left, right], value: null, prefilled: false })
+    } else {
+      // Leaf — given. Keep leaf values small so sums stay reasonable.
+      const value = relation === 'sum' ? 1 + Math.floor(rand() * 9) : 2 + Math.floor(rand() * 4)
+      nodes.push({ depth: level, children: [], value, prefilled: true })
     }
   }
-  // Compute the root (last node added, depth = depth)
-  // For now, leave all internal node values null; player must figure
-  // them out from the leaves.
   return { nodes, relation, moves: 0 }
 }
 

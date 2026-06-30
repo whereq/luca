@@ -25,11 +25,13 @@ export function applyFloodAction(
   action: FloodAction,
 ): GameTransition<FloodfillState, FloodStats> {
   switch (action.type) {
-    case "FLOOD":
-      return {
-        state: floodFill(state, 0, 0, action.payload.color),
-        stats: { moves: 1 },
-      }
+    case "FLOOD": {
+      // Always flood from the top-left origin. A no-op (same colour / invalid)
+      // must not count as a move.
+      const next = floodFill(state, 0, 0, action.payload.color)
+      if (next === state) return { state, consumed: false }
+      return { state: next, stats: { moves: next.moves } }
+    }
     case "RESTART":
       return { state: newGame(), consumed: true }
   }

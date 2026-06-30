@@ -31,7 +31,7 @@
   align-items: center;
   gap: 0.3rem;
   padding: 0.8rem 1.6rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid rgba(255, 255, 255, 0.15);
   min-width: 160px;
@@ -99,7 +99,7 @@
   align-items: center;
   background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
   padding: 1.5rem 2rem 1rem;
-  border-radius: 16px;
+  border-radius: var(--r-1);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.5),
     inset 0 2px 4px rgba(255, 255, 255, 0.05);
@@ -161,7 +161,7 @@
 .bomb-defuser .bomb-wire:focus-visible {
   outline: 2px solid var(--blue, #4f9eff);
   outline-offset: 4px;
-  border-radius: 4px;
+  border-radius: var(--r-1);
 }
 
 .bomb-defuser .bomb-wire.cut {
@@ -176,7 +176,7 @@
 .bomb-defuser .bomb-wire-cable {
   width: 12px;
   height: 140px;
-  border-radius: 2px;
+  border-radius: var(--r-1);
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
@@ -220,7 +220,7 @@
   text-align: center;
   padding: 2rem;
   background: rgba(0, 0, 0, 0.85);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   animation: bomb-result-appear 0.4s ease;
   z-index: 10;
 }
@@ -255,7 +255,7 @@
   padding: 0.5rem 1.5rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -288,7 +288,7 @@
 .bomb-defuser .bomb-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -312,7 +312,7 @@
   background: var(--blue, #4f9eff);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

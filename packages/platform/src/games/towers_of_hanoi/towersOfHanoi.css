@@ -27,7 +27,7 @@
 .towers-of-hanoi .towers-progress-bar {
   height: 8px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: var(--r-1);
   overflow: hidden;
 }
 
@@ -71,7 +71,7 @@
 .towers-of-hanoi .tower:focus-visible {
   outline: 2px solid var(--blue, #4f9eff);
   outline-offset: 4px;
-  border-radius: 8px;
+  border-radius: var(--r-1);
 }
 
 .towers-of-hanoi .tower-label {
@@ -102,7 +102,7 @@
 .towers-of-hanoi .tower-empty {
   width: 30px;
   height: 12px;
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--r-1) var(--r-1) 0 0;
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -132,7 +132,7 @@
 .towers-of-hanoi .disk {
   height: 24px;
   margin-bottom: 2px;
-  border-radius: 4px;
+  border-radius: var(--r-1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,7 +160,7 @@
 
 .towers-of-hanoi .tower.target {
   background: rgba(79, 158, 255, 0.08);
-  border-radius: 8px;
+  border-radius: var(--r-1);
   transition: background 0.15s ease;
 }
 
@@ -171,7 +171,7 @@
   font-size: 0.9rem;
   padding: 0.4rem 0.8rem;
   background: rgba(248, 113, 113, 0.1);
-  border-radius: 6px;
+  border-radius: var(--r-1);
   animation: towers-shake 0.3s ease;
 }
 
@@ -194,7 +194,7 @@
 .towers-of-hanoi .towers-controls button {
   font-size: 0.9rem;
   padding: 0.3rem 0.7rem;
-  border-radius: 4px;
+  border-radius: var(--r-1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.05);
   color: inherit;
@@ -228,7 +228,7 @@
 .towers-of-hanoi .towers-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -252,7 +252,7 @@
   background: var(--blue, #4f9eff);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

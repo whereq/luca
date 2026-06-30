@@ -17,12 +17,17 @@
   font-size: 0.85rem;
   padding: 0.3rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
+  border-radius: var(--r-1);
 }
 
 .hackenbush .hb-label { opacity: 0.6; font-size: 0.75rem; }
-.hackenbush .hb-value { font-weight: 600; text-transform: uppercase; }
-.hackenbush .hb-spacer { width: 1rem; }
+.hackenbush .hb-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+.hackenbush .hb-spacer { width: 0.8rem; }
+.hackenbush .hb-turn { font-size: 0.75rem; opacity: 0.7; min-width: 7em; text-align: right; }
+
+/* Blue (cuttable) edges thicken on hover for affordance. */
+.hackenbush .hb-edge-cut { transition: stroke-width 0.1s ease; }
+.hackenbush g:hover > .hb-edge-cut { stroke-width: 6; }
 
 .hackenbush .hb-result {
   position: absolute;
@@ -35,7 +40,7 @@
   text-align: center;
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: hb-result-appear 0.4s ease;
 }
@@ -53,7 +58,7 @@
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -74,7 +79,7 @@
 .hackenbush .hb-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -91,7 +96,7 @@
   background: rgba(79, 158, 255, 0.9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

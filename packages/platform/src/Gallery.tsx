@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GAMES } from './registry'
 import GameCard from './GameCard'
-import { Faq } from './FAQ/Faq'
 import './css/gallery.css'
 
 type Filter = 'all' | 'playable' | 'coming_soon'
@@ -130,61 +129,9 @@ export default function LucaGamesPage() {
         {t('games.credits_2', 'Built with care.')}
       </p>
 
-      <Faq
-        title={t('games.luca.faq_title', 'About the games')}
-        items={[
-          {
-            question: t(
-              'games.luca.faq_why_blue_q',
-              'Why are the 2048 and Sudoku tiles blue?',
-            ),
-            answer: t(
-              'games.luca.faq_why_blue_a',
-              "The tiles use the luca math color (a clean blue) instead of the original 2048 game's warm orange. Each luca subject — math, physics, chemistry — has its own color, and the games follow that pattern. 2048 and Sudoku are pure number/logic puzzles, so they use the math blue. Lights Out uses the physics purple (it's about chains of energy). The 2048 tile keeps the orange accent as a celebration of reaching the win state.",
-            ),
-          },
-          {
-            question: t(
-              'games.luca.faq_dark_q',
-              'I can\'t see the "2" tile in dark mode. Is this a bug?',
-            ),
-            answer: t(
-              'games.luca.faq_dark_a',
-              'No — this was fixed in v1.0.0.106. The original tiles used a warm cream color which clashed with dark mode. The current math-blue palette uses mid-tones that look correct in both themes. If you\'re seeing the old version, hard-refresh (Cmd/Ctrl+Shift+R) to clear your browser cache.',
-            ),
-          },
-          {
-            question: t(
-              'games.luca.faq_engine_q',
-              'Is there a game engine these run on?',
-            ),
-            answer: t(
-              'games.luca.faq_engine_a',
-              'Yes — all 3 games run on a shared GameEngine that handles the lifecycle state machine, persistence to localStorage, keyboard input, and shared UI (stats, help overlay, win/loss banners). Each game contributes its own pure logic and a render function. This means new games are ~150 lines of new code and automatically get the same chrome (help, stats, restart, win/loss handling) for free.',
-            ),
-          },
-          {
-            question: t(
-              'games.luca.faq_more_q',
-              'When do the other 25 games ship?',
-            ),
-            answer: t(
-              'games.luca.faq_more_a',
-              'They\'ll roll out in small batches over the coming weeks. Each one is a ~150-line game definition on top of the GameEngine, plus a themed render. The first batch will likely include Towers of Hanoi, Mastermind, and Reversi — all classics that pair well with the existing collection.',
-            ),
-          },
-          {
-            question: t(
-              'games.luca.faq_scores_q',
-              'Where is my best score saved?',
-            ),
-            answer: t(
-              'games.luca.faq_scores_a',
-              "In your browser's localStorage, keyed by game slug. No account is required, and the scores never leave your device. A future hosted version of luca could add an optional online leaderboard — but the local best-score tracker stays even without an account.",
-            ),
-          },
-        ]}
-      />
+      {/* "About the games" FAQ is hidden for now — its content was stale
+          (referenced "3 games" / "other 25 games" / old version notes).
+          Re-enable with refreshed copy when ready. */}
     </article>
   )
 }

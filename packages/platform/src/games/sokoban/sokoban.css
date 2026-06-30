@@ -16,11 +16,12 @@
   font-size: 0.85rem;
   padding: 0.3rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
+  border-radius: var(--r-1);
 }
 
 .sokoban .sk-label { opacity: 0.6; font-size: 0.75rem; }
-.sokoban .sk-value { font-weight: 600; }
+.sokoban .sk-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+.sokoban .sk-spacer { width: 0.8rem; }
 
 .sokoban .sk-controls {
   display: flex;
@@ -37,7 +38,7 @@
 .sokoban .sk-controls button {
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.06);
   color: inherit;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -61,7 +62,7 @@
   text-align: center;
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: sk-result-appear 0.4s ease;
 }
@@ -78,7 +79,7 @@
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -99,7 +100,7 @@
 .sokoban .sk-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -116,7 +117,7 @@
   background: rgba(79, 158, 255, 0.9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

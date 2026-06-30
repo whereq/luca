@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next"
 import { GameEngine, type GameRenderContext } from "@luca-game/engine"
 import {
   type FloodfillState as FloodState,
-  newGame, isSolved, isLoss,
+  isSolved, isLoss, originRegionSize,
 } from "./floodfill"
 import type { FloodAction, FloodStats } from "./floodfillDefinition"
 import { floodfillDefinition } from "./floodfillDefinition"
@@ -72,8 +72,11 @@ function FloodBoard({
       )}
 
       <div className="ff-info">
-        <span className="ff-label">Moves:</span>
+        <span className="ff-label">{t("games.play.moves", "Moves")}:</span>
         <span className="ff-value">{state.moves}</span>
+        <span style={{ width: "1rem", display: "inline-block" }} />
+        <span className="ff-label">{t("games.floodfill.filled", "Filled")}:</span>
+        <span className="ff-value">{Math.round((originRegionSize(state) / (n * n)) * 100)}%</span>
       </div>
 
       <div
@@ -92,7 +95,7 @@ function FloodBoard({
       </div>
 
       <div className="ff-palette">
-        {PALETTE.slice(0, n).map((c, i) => (
+        {PALETTE.slice(0, state.colors).map((c, i) => (
           <button
             key={i}
             className={"ff-pal-swatch" + (i === state.grid[0][0] ? " current" : "")}

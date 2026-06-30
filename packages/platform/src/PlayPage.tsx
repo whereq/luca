@@ -1,8 +1,9 @@
-import { useEffect, lazy, Suspense } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getGameFuzzy, getGame, PLAYABLE_GAMES } from './registry'
 import ComingSoon from './ComingSoon'
+import './css/play.css'
 
 /**
  * PlayPage — /games/luca/:slug
@@ -92,23 +93,50 @@ export default function PlayPage() {
     }
   }, [game, t])
 
-  if (!game) {
-    return <ComingSoon />
-  }
-
-  if (game.status === 'coming_soon') {
-    return <ComingSoon />
-  }
-
-  // Eagerly-loaded components (the original 3)
-  if (EAGER_GAMES[game.slug]) {
+  let inner: React.ReactNode
+  if (!game || game.status === 'coming_soon') {
+    inner = <ComingSoon />
+  } else if (EAGER_GAMES[game.slug]) {
     const Comp = EAGER_GAMES[game.slug]
-    return <Comp />
+    inner = <Comp />
+  } else {
+    inner = <DynamicGameLoader slug={game.slug} />
   }
 
-  // All other playable games — dynamic import from the games barrel.
-  // The actual game modules are lazy and loaded on first navigation.
-  return <DynamicGameLoader slug={game.slug} />
+  return <PlayShell game={game}>{inner}</PlayShell>
+}
+
+/** Wraps every game with a top bar that links back to the Luca gallery and
+ *  names the current game. Keeps routing concerns in the platform layer
+ *  (the engine stays routing-agnostic). */
+function PlayShell({
+  game,
+  children,
+}: {
+  game: ReturnType<typeof getGame>
+  children: React.ReactNode
+}) {
+  const { t } = useTranslation()
+  const title = game ? t(`games.${game.slug}.name`, { defaultValue: game.title }) : ''
+  return (
+    <div className="luca-play">
+      <div className="luca-play-bar">
+        <Link to="/games/luca" className="luca-play-back">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M9 2 L4 7 L9 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {t('games.luca.all_games', { defaultValue: 'All games' })}
+        </Link>
+        {game && (
+          <span className="luca-play-title">
+            <span className="luca-play-title-icon" aria-hidden="true">{game.icon}</span>
+            {title}
+          </span>
+        )}
+      </div>
+      {children}
+    </div>
+  )
 }
 
 function DynamicGameLoader({ slug }: { slug: string }) {

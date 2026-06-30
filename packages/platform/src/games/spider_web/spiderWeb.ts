@@ -67,35 +67,51 @@ export function buildWeb(rings: number = 5, spokes: number = 8): NodeId[][] {
   return adj
 }
 
-export function newGame(seed: number = 0): SpiderWebState {
+/** BFS reachability from `from` to `to`, never stepping on a stuck node. */
+export function reachable(adj: NodeId[][], stuck: NodeId[], from: NodeId, to: NodeId): boolean {
+  const blocked = new Set(stuck)
+  if (blocked.has(to) || blocked.has(from)) return false
+  const seen = new Set<NodeId>([from])
+  const queue: NodeId[] = [from]
+  while (queue.length > 0) {
+    const n = queue.shift()!
+    if (n === to) return true
+    for (const m of adj[n]) {
+      if (!seen.has(m) && !blocked.has(m)) { seen.add(m); queue.push(m) }
+    }
+  }
+  return false
+}
+
+export function newGame(seed: number = Date.now()): SpiderWebState {
   const rings = 5
   const spokes = 8
   const N = rings * spokes
-  let rng = (seed || Date.now()) | 0
+  let rng = (seed || 1) | 0
   const rand = () => {
     rng = (rng * 1103515245 + 12345) & 0x7fffffff
     return rng / 0x7fffffff
   }
-  // Pick 3-5 random "stuck" nodes (not in center or fly path)
-  const stuck: NodeId[] = []
-  for (let i = 0; i < 5; i++) {
-    const n = Math.floor(rand() * N)
-    if (!stuck.includes(n)) stuck.push(n)
+  const adj = buildWeb(rings, spokes)
+  const spider: NodeId = 0 // centre
+  const fly: NodeId = (rings - 1) * spokes + Math.floor(rand() * spokes) // outer ring
+
+  // Choose up to 5 "stuck" nodes that are NOT the spider or fly, and that
+  // still leave the fly reachable. Retry; fall back to no stuck nodes (the
+  // web is connected, so that's always solvable).
+  let stuck: NodeId[] = []
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const pick: NodeId[] = []
+    let tries = 0
+    while (pick.length < 5 && tries < 200) {
+      const n = Math.floor(rand() * N)
+      if (n !== spider && n !== fly && !pick.includes(n)) pick.push(n)
+      tries++
+    }
+    if (reachable(adj, pick, spider, fly)) { stuck = pick; break }
   }
-  // Spider starts at center (0, 0)
-  const spider: NodeId = 0
-  // Fly at outermost ring, random spoke
-  const fly: NodeId = (rings - 1) * spokes + Math.floor(rand() * spokes)
-  return {
-    rings,
-    spokes,
-    adj: buildWeb(rings, spokes),
-    stuck,
-    spider,
-    fly,
-    moves: 0,
-    path: [spider],
-  }
+
+  return { rings, spokes, adj, stuck, spider, fly, moves: 0, path: [spider] }
 }
 
 export function canMove(state: SpiderWebState, to: NodeId): boolean {

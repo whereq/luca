@@ -20,6 +20,7 @@ import type {
 } from './contracts'
 import { useGameController } from './useGameController'
 import { defaultStorage } from './GameStorage'
+import { useGameLifecycle } from './GameLifecycle'
 
 const EMPTY_SCORE: GameScore = { best: 0, plays: 0, lastPlayedAt: '' }
 
@@ -42,7 +43,23 @@ export function GameEngine<
   TStats extends GameStats,
 >({ definition, className = '' }: GameEngineProps<TState, TAction, TStats>) {
   const { t } = useTranslation()
-  const controller = useGameController({ definition, storage: defaultStorage })
+  const lifecycle = useGameLifecycle()
+  const controller = useGameController({
+    definition,
+    storage: defaultStorage,
+    // Bridge the engine's terminal event to the host's lifecycle handler
+    // (e.g. the platform's completion bridge). The engine itself stays
+    // ignorant of what `onComplete` does.
+    onComplete: ({ status, state, stats }) => {
+      lifecycle.onComplete?.({
+        slug: definition.meta.slug,
+        status,
+        state,
+        stats,
+        reportedComplete: status === 'won',
+      })
+    },
+  })
 
   // Build the render context once per render — uses stable callbacks
   // so the game's render function isn't re-created unnecessarily.
@@ -139,13 +156,6 @@ export function GameEngine<
             {controller.persistedScore?.plays ?? 0}
           </div>
         </div>
-        <button
-          type="button"
-          className="cb-btn cb-btn-md cb-btn-primary"
-          onClick={() => controller.restart()}
-        >
-          {t('games.play.restart', 'Restart')}
-        </button>
       </header>
 
       <div className="game-engine-body">
@@ -155,7 +165,14 @@ export function GameEngine<
       <footer className="game-engine-foot">
         <button
           type="button"
-          className="game-engine-help-toggle"
+          className="cb-btn cb-btn-md cb-btn-primary game-engine-restart"
+          onClick={() => controller.restart()}
+        >
+          {t('games.play.restart', 'Restart')}
+        </button>
+        <button
+          type="button"
+          className="cb-btn cb-btn-md cb-btn-secondary game-engine-help-toggle"
           onClick={() => controller.setShowHelp(!controller.showHelp)}
           aria-label="Help"
         >

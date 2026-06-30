@@ -17,7 +17,7 @@
   font-size: 0.9rem;
   padding: 0.3rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
+  border-radius: var(--r-1);
 }
 
 .ichomp .ich-label {
@@ -30,12 +30,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+.ichomp .ich-spacer { width: 0.8rem; }
+.ichomp .ich-turn { font-size: 0.8rem; opacity: 0.7; }
+
 .ichomp .ich-grid {
   display: grid;
   gap: 4px;
   background: rgba(255, 255, 255, 0.1);
   padding: 4px;
-  border-radius: 8px;
+  border-radius: var(--r-1);
   width: 100%;
   max-width: 360px;
   aspect-ratio: 1;
@@ -45,7 +48,7 @@
   background: #22c55e;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--r-1);
   font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.1s ease;
@@ -85,7 +88,7 @@
   text-align: center;
   padding: 2rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: ich-result-appear 0.4s ease;
 }
@@ -105,7 +108,7 @@
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -128,7 +131,7 @@
 .ichomp .ich-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -145,7 +148,7 @@
   background: var(--blue, #4f9eff);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

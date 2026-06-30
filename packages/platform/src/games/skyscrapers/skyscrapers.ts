@@ -41,12 +41,27 @@ export function newPuzzle(size: number = 5, seed: number = 0): SkyscraperState {
     rng = (rng * 1103515245 + 12345) & 0x7fffffff
     return rng / 0x7fffffff
   }
-  // Generate a random Latin square (each row/column has 1..N exactly once)
+  // Generate a random VALID Latin square. Start from the cyclic base
+  // base[r][c] = (r + c) % size (a valid Latin square), then permute the
+  // rows, the columns, and the symbol labels — each transform preserves the
+  // Latin property, so the result is always valid (the previous per-cell
+  // random offset did NOT produce a Latin square → unsolvable puzzles).
+  const shuffled = (n: number): number[] => {
+    const a = Array.from({ length: n }, (_, i) => i)
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1))
+      ;[a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
+  const rowPerm = shuffled(size)
+  const colPerm = shuffled(size)
+  const symPerm = shuffled(size)
   const grid: number[][] = []
   for (let r = 0; r < size; r++) {
     const row: number[] = []
     for (let c = 0; c < size; c++) {
-      row.push(((r + c + Math.floor(rand() * size)) % size) + 1)
+      row.push(symPerm[(rowPerm[r] + colPerm[c]) % size] + 1)
     }
     grid.push(row)
   }

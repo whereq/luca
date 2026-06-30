@@ -1,9 +1,9 @@
-// iChomp — pure game logic.
+// iChomp — pure game logic (solo vs the "i" — the device).
 //
-// A simplification of Chomp: an NxN grid of cells. Each turn, the
-// player picks a cell, "eats" it, and all cells strictly above and
-// to the right also disappear. The player forced to eat the poison
-// square (top-left) loses.
+// Chomp on an NxN grid. The top-left cell (0,0) is POISON. On your turn you
+// eat a cell, which also eats every cell below and to the right of it. You and
+// the AI alternate; whoever is forced to eat the poison loses. You move first
+// (the first player has a winning strategy in Chomp — find it!).
 //
 // All exports are PURE FUNCTIONS. No React, no DOM.
 
@@ -12,18 +12,19 @@ export type IchompState = {
   /** 2D grid. true = still present, false = eaten. */
   grid: boolean[][]
   moves: number
-  /** First cell eaten is the "poison" (top-left). Player who eats it loses. */
+  /** Whose turn: 'player' or 'ai'. */
+  turn: 'player' | 'ai'
+  /** Who ate the poison (and thus lost), or null while the game is live. */
+  loser: 'player' | 'ai' | null
 }
 
 export function newGame(size: number = 4): IchompState {
-  const grid: boolean[][] = []
-  for (let r = 0; r < size; r++) {
-    grid.push(new Array(size).fill(true))
-  }
-  return { size, grid, moves: 0 }
+  const grid = Array.from({ length: size }, () => new Array(size).fill(true))
+  return { size, grid, moves: 0, turn: 'player', loser: null }
 }
 
 export function isLegal(state: IchompState, r: number, c: number): boolean {
+  if (state.loser !== null) return false
   if (r < 0 || r >= state.size || c < 0 || c >= state.size) return false
   return state.grid[r][c]
 }
@@ -31,34 +32,65 @@ export function isLegal(state: IchompState, r: number, c: number): boolean {
 export function applyMove(state: IchompState, r: number, c: number): IchompState {
   if (!isLegal(state, r, c)) return state
   const grid = state.grid.map(row => row.slice())
+  // Eat (r,c) and everything below & to the right.
   for (let i = r; i < state.size; i++) {
     for (let j = c; j < state.size; j++) {
       grid[i][j] = false
     }
   }
-  return { ...state, grid, moves: state.moves + 1 }
+  const atePoison = r === 0 && c === 0
+  return {
+    ...state,
+    grid,
+    moves: state.moves + 1,
+    turn: state.turn === 'player' ? 'ai' : 'player',
+    loser: atePoison ? state.turn : state.loser,
+  }
 }
 
-/** Is the game over (all cells eaten, or only poison left)? */
+export function remainingCount(state: IchompState): number {
+  return state.grid.reduce((s, row) => s + row.filter(Boolean).length, 0)
+}
+
 export function isGameOver(state: IchompState): boolean {
-  return state.grid.every(row => row.every(c => !c))
+  return state.loser !== null
 }
 
-/** The "poison" cell is (0, 0). Player who eats it loses. */
-export function poisonEaten(state: IchompState): boolean {
-  return !state.grid[0][0]
-}
-
+/** Player wins when the AI is forced to eat the poison. */
 export function isWin(state: IchompState): boolean {
-  return isGameOver(state) && !poisonEaten(state)
+  return state.loser === 'ai'
 }
 
+/** Player loses when they eat the poison. */
 export function isLoss(state: IchompState): boolean {
-  return poisonEaten(state)
+  return state.loser === 'player'
 }
 
 export function isSolved(state: IchompState): boolean {
   return isWin(state)
+}
+
+/** AI (the "i") move. Never eats the poison voluntarily; if it can leave the
+ *  player with ONLY the poison, it does (forcing the player to lose); else it
+ *  plays a random safe cell. Beatable with good first-player play. */
+export function aiMove(state: IchompState): [number, number] | null {
+  if (state.turn !== 'ai' || state.loser !== null) return null
+  const present: Array<[number, number]> = []
+  for (let r = 0; r < state.size; r++) {
+    for (let c = 0; c < state.size; c++) {
+      if (state.grid[r][c]) present.push([r, c])
+    }
+  }
+  if (present.length === 0) return null
+  const safe = present.filter(([r, c]) => !(r === 0 && c === 0))
+  if (safe.length === 0) return [0, 0] // forced — AI eats poison and loses
+
+  // Winning move: leave the player with only the poison.
+  for (const [r, c] of safe) {
+    if (remainingCount(applyMove(state, r, c)) === 1) return [r, c]
+  }
+  // Otherwise a random safe cell.
+  return safe[Math.floor(Math.random() * safe.length)]
 }
 
 export function newPuzzle(): IchompState {

@@ -5,7 +5,7 @@ import type {
 } from '@luca-game/engine'
 import {
   type IchompState,
-  newGame, applyMove, isLegal, isSolved, isLoss,
+  newGame, applyMove, isLegal, isWin, isLoss, aiMove, remainingCount,
 } from './ichomp'
 import { getGame } from '../../registry'
 
@@ -30,7 +30,13 @@ export function applyIchompAction(
       if (!isLegal(state, action.payload.r, action.payload.c)) {
         return { state, consumed: false }
       }
-      return { state: applyMove(state, action.payload.r, action.payload.c), stats: { moves: 1 } }
+      // Player moves; if they ate the poison the game is over (loss).
+      let s = applyMove(state, action.payload.r, action.payload.c)
+      if (s.loser === null && s.turn === 'ai') {
+        const m = aiMove(s)
+        if (m) s = applyMove(s, m[0], m[1])
+      }
+      return { state: s, stats: { moves: s.moves } }
     }
     case 'RESTART':
       return { state: newGame(4), consumed: true }
@@ -42,7 +48,7 @@ export const ichompDefinition: GameDefinition<IchompState, IchompAction, IchompS
 
   initialState: initialIchomp,
   applyAction: applyIchompAction,
-  isWin: isSolved,
+  isWin,
   isLoss,
 
   controls: {
@@ -52,17 +58,17 @@ export const ichompDefinition: GameDefinition<IchompState, IchompAction, IchompS
 
   help: {
     description:
-      'An NxN grid of cells. Click any cell to eat it and all cells above and to the right. The top-left is poisoned — eating it loses the game. Eat everything else to win.',
+      'Chomp vs the device. Click a cell to eat it and everything below & to the right. The top-left cell is poison. You and the AI alternate — whoever is forced to eat the poison loses. You move first.',
     controls: [
-      { action: 'Click any uneaten cell' },
+      { action: 'Click a cell to eat that corner' },
       { keys: 'R', action: 'restart' },
     ],
-    goal: 'Eat all non-poison cells.',
+    goal: 'Force the AI to eat the poison.',
   },
 
   stat: {
     label: 'games.ichomp.remaining',
-    compute: (state) => state.grid.flat().filter(c => c).length,
+    compute: (state) => remainingCount(state),
   },
 
   render: () => null as any,

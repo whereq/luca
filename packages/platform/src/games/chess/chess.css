@@ -16,7 +16,7 @@
   font-size: 0.85rem;
   padding: 0.3rem 0.8rem;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
+  border-radius: var(--r-1);
 }
 
 .chess .che-label { opacity: 0.6; font-size: 0.75rem; }
@@ -85,7 +85,7 @@
   width: min(360px, 90vw);
   height: min(360px, 90vw);
   border: 2px solid #000;
-  border-radius: 2px;
+  border-radius: var(--r-1);
   overflow: hidden;
   background: #000;
   padding: 0;
@@ -152,7 +152,7 @@
   text-align: center;
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: che-result-appear 0.4s ease;
 }
@@ -169,7 +169,7 @@
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -190,7 +190,7 @@
 .chess .che-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -207,7 +207,7 @@
   background: rgba(79, 158, 255, 0.9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

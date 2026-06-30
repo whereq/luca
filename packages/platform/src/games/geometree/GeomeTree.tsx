@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { GameEngine, type GameRenderContext } from "@luca-game/engine"
 import {
-  type GeomeTreeState, type GeomeNode,
-  newGame, setValue, isSolved, isLoss,
+  type GeomeTreeState,
+  isSolved, isLoss,
 } from "./geometree"
 import type { GeomeAction, GeomeStats } from "./geometreeDefinition"
 import { geometreeDefinition } from "./geometreeDefinition"
@@ -39,6 +39,7 @@ function GeomeBoard({
     catch { return true }
   })
   const [selected, setSelected] = useState<number | null>(null)
+  const [draft, setDraft] = useState("")
 
   useEffect(() => {
     if (state.moves > 0 && showOnboard) {
@@ -51,15 +52,25 @@ function GeomeBoard({
     if (state.moves === 0) setSelected(null)
   }, [state.moves])
 
+  // Seed the input with the node's current value when selection changes.
+  useEffect(() => {
+    const v = selected !== null ? state.nodes[selected]?.value : null
+    setDraft(v != null ? String(v) : "")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected])
+
   const interactive = !isSolved(state) && !isLoss(state)
 
   const handleNode = (idx: number) => {
     if (!interactive) return
+    if (state.nodes[idx].prefilled) return // leaves are given — not editable
     setSelected(selected === idx ? null : idx)
   }
 
-  const handleValue = (v: number) => {
+  const submit = () => {
     if (selected === null) return
+    const v = parseInt(draft, 10)
+    if (!Number.isFinite(v) || v < 0) return
     ctx.dispatch({ type: "SET", payload: { idx: selected, value: v } })
   }
 
@@ -71,7 +82,7 @@ function GeomeBoard({
       const posInLevel = i - (Math.pow(2, depth) - 1)
       const totalInLevel = Math.pow(2, depth)
       const x = 40 + (320 - 80) * (posInLevel + 0.5) / totalInLevel
-      const y = 30 + depth * 50
+      const y = 32 + depth * 56
       positions.push({ x, y })
     }
     return positions
@@ -109,7 +120,7 @@ function GeomeBoard({
         <span className="gt-value">parents = {state.relation} of children</span>
       </div>
 
-      <svg className="gt-svg" width="320" height="180" viewBox="0 0 320 180">
+      <svg className="gt-svg" width="320" height="240" viewBox="0 0 320 240">
         {lines.map((l, i) => (
           <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
             stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
@@ -138,23 +149,32 @@ function GeomeBoard({
         })}
       </svg>
 
-      {selected !== null && (
+      {selected !== null && !state.nodes[selected].prefilled && (
         <div className="gt-palette">
-          <div className="gt-palette-label">Value for node {selected}:</div>
-          <div className="gt-palette-buttons">
-            {Array.from({ length: 12 }, (_, i) => i + 1).map(v => (
-              <button key={v} className="gt-pal-btn" onClick={() => handleValue(v)}>
-                {v}
-              </button>
-            ))}
+          <div className="gt-palette-label">
+            {t("games.geometree.enter", "Enter this node's value")}
+          </div>
+          <div className="gt-input-row">
+            <input
+              type="number"
+              min={0}
+              className="gt-input"
+              value={draft}
+              autoFocus
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") submit() }}
+            />
+            <button className="gt-set-btn" onClick={submit} disabled={draft.trim() === ""}>
+              {t("games.geometree.set", "Set")}
+            </button>
           </div>
         </div>
       )}
 
       {isSolved(state) && (
         <div className="gt-result won">
-          <div className="gt-result-title">All consistent!</div>
-          <button onClick={ctx.restart}>Play again</button>
+          <div className="gt-result-title">{t("games.geometree.won", "All consistent!")}</div>
+          <button onClick={ctx.restart}>{t("games.play.restart", "Play again")}</button>
         </div>
       )}
     </div>

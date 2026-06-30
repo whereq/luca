@@ -55,7 +55,7 @@ function CalcrosticBoard({
   const interactive = !isSolved(state) && !isLoss(state)
 
   const handleCell = (r: number, c: number) => {
-    if (!interactive) return
+    if (!interactive || state.given[r][c]) return // clue cells are locked
     setSelected({ r, c })
   }
 
@@ -76,7 +76,7 @@ function CalcrosticBoard({
         }}>
           <div className="cal-onboard-inner">
             <strong>{t("games.calcrostic.name", "Calcrostic")}</strong>
-            <p>{t("games.calcrostic.onboard", "Fill the grid so every row and column sums to its clue. Use each number 1..N exactly once per row/column.")}</p>
+            <p>{t("games.calcrostic.onboard", "Fill every blank cell with a number from 1 to N so each row matches its clue (left) and each column matches its clue (top). Given numbers are locked.")}</p>
             <button>{t("common.got_it", "Got it")}</button>
           </div>
         </div>
@@ -89,7 +89,7 @@ function CalcrosticBoard({
 
       <div
         className="cal-grid"
-        style={{ gridTemplateColumns: "32px repeat(" + n + ", 1fr) 32px" }}
+        style={{ gridTemplateColumns: "36px repeat(" + n + ", 36px) 36px" }}
       >
         <div className="cal-corner" />
         {Array.from({ length: n }, (_, c) => (
@@ -108,9 +108,9 @@ function CalcrosticBoard({
                 return (
                   <button
                     key={r + "," + c}
-                    className={"cal-cell" + (v !== 0 ? " filled" : "") + (isSelected ? " selected" : "")}
+                    className={"cal-cell" + (state.given[r][c] ? " given" : "") + (v !== 0 ? " filled" : "") + (isSelected ? " selected" : "")}
                     onClick={() => handleCell(r, c)}
-                    disabled={!interactive}
+                    disabled={!interactive || state.given[r][c]}
                   >
                     {v !== 0 ? v : ""}
                   </button>
@@ -131,18 +131,30 @@ function CalcrosticBoard({
         <div className="cal-corner" />
       </div>
 
-      {selected && (
-        <div className="cal-palette">
-          <div className="cal-palette-label">Value for row {selected.r + 1}, col {selected.c + 1}:</div>
-          <div className="cal-palette-buttons">
-            {Array.from({ length: n }, (_, i) => i + 1).map(v => (
-              <button key={v} className="cal-pal-btn" onClick={() => handleValue(v)}>
-                {v}
-              </button>
-            ))}
-          </div>
+      {/* Number pad — always shown below the board. Buttons act on the
+          selected blank cell; disabled until one is picked. */}
+      <div className="cal-palette">
+        <div className="cal-palette-label">
+          {selected
+            ? t("games.calcrostic.value_for", { defaultValue: "Value for row {{r}}, col {{c}}", r: selected.r + 1, c: selected.c + 1 })
+            : t("games.calcrostic.pick_cell", { defaultValue: "Pick a blank cell, then a number" })}
         </div>
-      )}
+        <div className="cal-palette-buttons">
+          {Array.from({ length: n }, (_, i) => i + 1).map(v => (
+            <button key={v} className="cal-pal-btn" disabled={!selected} onClick={() => handleValue(v)}>
+              {v}
+            </button>
+          ))}
+          <button
+            className="cal-pal-btn cal-pal-clear"
+            disabled={!selected}
+            onClick={() => handleValue(0)}
+            aria-label={t("games.calcrostic.clear", { defaultValue: "Clear" })}
+          >
+            ×
+          </button>
+        </div>
+      </div>
 
       {isSolved(state) && (
         <div className="cal-result won">

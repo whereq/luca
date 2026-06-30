@@ -13,14 +13,16 @@ export type NimMove = { pile: number; count: number }
 export type NimState = {
   piles: number[]
   moves: number
-  /** Whose turn it is. 'player' for the human. */
-  turn: 'player'
+  /** Whose turn it is. */
+  turn: 'player' | 'ai'
   /** Whether the game uses misère rules. */
   misere: boolean
+  /** Who took the last stone (and thus the result), or null while live. */
+  winner: 'player' | 'ai' | null
 }
 
 export function newNimGame(piles: number[] = [3, 5, 7], misere = false): NimState {
-  return { piles: piles.slice(), moves: 0, turn: 'player', misere }
+  return { piles: piles.slice(), moves: 0, turn: 'player', misere, winner: null }
 }
 
 /** Alias used by the engine's GameDefinition. */
@@ -34,10 +36,25 @@ export function isValidMove(state: NimState, move: NimMove): boolean {
 }
 
 export function applyMove(state: NimState, move: NimMove): NimState {
-  if (!isValidMove(state, move)) return state
+  if (!isValidMove(state, move) || state.winner !== null) return state
   const piles = state.piles.slice()
   piles[move.pile] -= move.count
-  return { ...state, piles, moves: state.moves + 1 }
+  const over = piles.every(p => p === 0)
+  // Whoever empties the board took the last stone. Normal play: that mover
+  // wins. Misère: that mover loses (so the OTHER side is the winner).
+  let winner: 'player' | 'ai' | null = state.winner
+  if (over) {
+    winner = state.misere
+      ? (state.turn === 'player' ? 'ai' : 'player')
+      : state.turn
+  }
+  return {
+    ...state,
+    piles,
+    moves: state.moves + 1,
+    turn: state.turn === 'player' ? 'ai' : 'player',
+    winner,
+  }
 }
 
 /** Game is over when all piles are empty. */
@@ -45,11 +62,9 @@ export function isGameOver(state: NimState): boolean {
   return state.piles.every(p => p === 0)
 }
 
-/** In normal play: the player who took the last stone wins.
- *  In misère: the player who took the last stone loses. */
+/** True once the human has won. */
 export function playerWon(state: NimState): boolean {
-  if (!isGameOver(state)) return null as any  // not over
-  return !state.misere
+  return state.winner === 'player'
 }
 
 /** Compute the nim-sum (xor of all pile sizes). Used to determine
@@ -73,19 +88,14 @@ export function isWinningPosition(state: NimState): boolean {
   return s !== 0
 }
 
-/** No real "loss" condition in Nim — you can always move until empty. */
-export function isLoss(_state: NimState): boolean {
-  return false
+/** Player loses when the AI takes the last stone (normal play). */
+export function isLoss(state: NimState): boolean {
+  return state.winner === 'ai'
 }
 
-/** Alias used by the engine. Nim is won when the game is over
- *  and the player who moved last took the last stone. Since we
- *  don't track whose turn it is in the engine's view, we use
- *  "the game is over and the player has at least one valid move
- *  history" as a proxy: the game is over (all piles empty) and
- *  we have made at least one move. */
+/** The engine's win check: the human took the last stone. */
 export function isSolved(state: NimState): boolean {
-  return isGameOver(state) && state.moves > 0
+  return state.winner === 'player'
 }
 
 /** Optimal move for the current player (if winning position).

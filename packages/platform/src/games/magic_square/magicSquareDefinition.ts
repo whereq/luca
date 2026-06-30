@@ -19,7 +19,7 @@ export interface MagicSquareStats extends GameStats {
 }
 
 export function initialMagic(): MagicSquareState {
-  return newPuzzle(3)
+  return newPuzzle() // random size → varying magic number (15 / 34 / 65)
 }
 
 export function applyMagicAction(
@@ -32,7 +32,7 @@ export function applyMagicAction(
     case 'CLEAR':
       return { state: setCell(state, action.payload.idx, 0), stats: { moves: 0 } }
     case 'RESTART':
-      return { state: newPuzzle(3), consumed: true }
+      return { state: newPuzzle(), consumed: true }
   }
 }
 

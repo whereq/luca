@@ -1,17 +1,22 @@
 // Sokoban - game renderer.
+//
+// Renders the layered state (walls / targets / boxes / player). Arrow keys are
+// wired by the engine's keyboard map; on-screen buttons dispatch the same
+// MOVE actions.
 
 import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { GameEngine, type GameRenderContext } from "@luca-game/engine"
 import {
   type SokobanState,
-  newGame, move, isSolved, isLoss,
+  isSolved, isLoss, boxesOnTargets, targetCount,
 } from "./sokoban"
 import type { SokobanAction, SokobanStats } from "./sokobanDefinition"
 import { sokobanDefinition } from "./sokobanDefinition"
 import "./sokoban.css"
 
 const ONBOARD_KEY = "luca:onboarded:sokoban"
+const CELL = 36
 
 function renderSokoban(
   state: SokobanState,
@@ -47,24 +52,15 @@ function SokobanBoard({
   }, [state.moves, showOnboard])
 
   const interactive = !isSolved(state) && !isLoss(state)
-  const cellSize = 30
-
+  // Arrow keys are handled by the engine's keyboard map (no extra listener
+  // here — having both caused every key press to move twice).
   const handleMove = (dr: number, dc: number) => {
     if (!interactive) return
     ctx.dispatch({ type: "MOVE", payload: { dr, dc } })
   }
 
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => {
-      if (!interactive) return
-      if (e.key === "ArrowUp" || e.key === "w") { e.preventDefault(); handleMove(-1, 0) }
-      else if (e.key === "ArrowRight" || e.key === "d") { e.preventDefault(); handleMove(0, 1) }
-      else if (e.key === "ArrowDown" || e.key === "s") { e.preventDefault(); handleMove(1, 0) }
-      else if (e.key === "ArrowLeft" || e.key === "a") { e.preventDefault(); handleMove(0, -1) }
-    }
-    window.addEventListener("keydown", h)
-    return () => window.removeEventListener("keydown", h)
-  }, [interactive])
+  const W = state.width * CELL
+  const H = state.height * CELL
 
   return (
     <div className="sk-wrap">
@@ -75,71 +71,66 @@ function SokobanBoard({
         }}>
           <div className="sk-onboard-inner">
             <strong>{t("games.sokoban.name", "Sokoban")}</strong>
-            <p>{t("games.sokoban.onboard", "Push boxes onto target squares. Use arrow keys or the on-screen buttons.")}</p>
+            <p>{t("games.sokoban.onboard", "Push every box (●) onto a target (◎). You can only push one box at a time and can't pull. Use the arrow keys or the on-screen buttons.")}</p>
             <button>{t("common.got_it", "Got it")}</button>
           </div>
         </div>
       )}
 
       <div className="sk-info">
-        <span className="sk-label">Moves:</span>
+        <span className="sk-label">{t("games.sokoban.on_targets", "On targets")}:</span>
+        <span className="sk-value">{boxesOnTargets(state)} / {targetCount(state)}</span>
+        <span className="sk-spacer" />
+        <span className="sk-label">{t("games.play.moves", "Moves")}:</span>
         <span className="sk-value">{state.moves}</span>
       </div>
 
-      <svg width={state.width * cellSize} height={state.height * cellSize} style={{ background: "#1a1a1a", borderRadius: 4 }}>
-        {state.grid.map((row, r) =>
-          row.map((cell, c) => {
-            const x = c * cellSize, y = r * cellSize
-            const fill = cell === 1 ? "#666" : cell === 3 ? "rgba(34, 197, 94, 0.3)" : "rgba(255,255,255,0.04)"
+      <svg width={W} height={H} style={{ background: "#15120f", borderRadius: "var(--r-1)" }}>
+        {Array.from({ length: state.height }, (_, r) =>
+          Array.from({ length: state.width }, (_, c) => {
+            const x = c * CELL, y = r * CELL
+            const wall = state.walls[r][c]
             return (
-              <rect key={r + "," + c} x={x} y={y} width={cellSize} height={cellSize} fill={fill} />
+              <rect key={"f" + r + "," + c} x={x} y={y} width={CELL} height={CELL}
+                fill={wall ? "#5b513f" : "rgba(255,255,255,0.04)"}
+                stroke="rgba(0,0,0,0.25)" strokeWidth="1" />
             )
           })
         )}
-        {/* Boxes (cells with value 2, or 3 = box on target) */}
-        {state.grid.map((row, r) =>
-          row.map((cell, c) => {
-            if (cell !== 2 && cell !== 3) return null
-            return (
-              <rect key={"b" + r + "," + c} x={c * cellSize + 4} y={r * cellSize + 4}
-                width={cellSize - 8} height={cellSize - 8}
-                fill={cell === 3 ? "#22c55e" : "#a855f7"}
-                stroke="#fff" strokeWidth="1.5" rx="2" />
-            )
-          })
+        {/* Targets */}
+        {state.targets.map((row, r) =>
+          row.map((isT, c) => isT ? (
+            <circle key={"t" + r + "," + c} cx={c * CELL + CELL / 2} cy={r * CELL + CELL / 2}
+              r={CELL / 5} fill="none" stroke="#22c55e" strokeWidth="2.5" />
+          ) : null)
         )}
-        {/* Targets (cells with value 3, or 2 = box on target) */}
-        {state.grid.map((row, r) =>
-          row.map((cell, c) => {
-            if (cell !== 2 && cell !== 3) return null
-            return null  // already drawn above
-          })
+        {/* Boxes (green when on a target). */}
+        {state.boxes.map((row, r) =>
+          row.map((isB, c) => isB ? (
+            <rect key={"b" + r + "," + c} x={c * CELL + 5} y={r * CELL + 5}
+              width={CELL - 10} height={CELL - 10} rx="3"
+              fill={state.targets[r][c] ? "#22c55e" : "#c9863f"}
+              stroke="#1c1c1c" strokeWidth="1.5" />
+          ) : null)
         )}
         {/* Player */}
-        <circle cx={state.player[1] * cellSize + cellSize / 2}
-                cy={state.player[0] * cellSize + cellSize / 2}
-                r={cellSize / 3} fill="#fbbf24" stroke="#000" strokeWidth="1" />
+        <circle cx={state.player[1] * CELL + CELL / 2} cy={state.player[0] * CELL + CELL / 2}
+          r={CELL / 3.2} fill="#fbbf24" stroke="#000" strokeWidth="1.5" />
       </svg>
 
       <div className="sk-controls">
-        <button onClick={() => handleMove(-1, 0)} disabled={!interactive}>{"\u2191"}</button>
+        <button onClick={() => handleMove(-1, 0)} disabled={!interactive} aria-label="Up">{"↑"}</button>
         <div>
-          <button onClick={() => handleMove(0, -1)} disabled={!interactive}>{"\u2190"}</button>
-          <button onClick={() => handleMove(1, 0)} disabled={!interactive}>{"\u2193"}</button>
-          <button onClick={() => handleMove(0, 1)} disabled={!interactive}>{"\u2192"}</button>
+          <button onClick={() => handleMove(0, -1)} disabled={!interactive} aria-label="Left">{"←"}</button>
+          <button onClick={() => handleMove(1, 0)} disabled={!interactive} aria-label="Down">{"↓"}</button>
+          <button onClick={() => handleMove(0, 1)} disabled={!interactive} aria-label="Right">{"→"}</button>
         </div>
       </div>
 
       {isSolved(state) && (
         <div className="sk-result won">
-          <div className="sk-result-title">Solved!</div>
-          <button onClick={ctx.restart}>Play again</button>
-        </div>
-      )}
-      {isLoss(state) && (
-        <div className="sk-result lost">
-          <div className="sk-result-title">Stuck</div>
-          <button onClick={ctx.restart}>Try again</button>
+          <div className="sk-result-title">{t("games.sokoban.won", "Solved!")}</div>
+          <button onClick={ctx.restart}>{t("games.play.restart", "Play again")}</button>
         </div>
       )}
     </div>

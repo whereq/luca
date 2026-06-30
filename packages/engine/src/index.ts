@@ -8,6 +8,15 @@ import './GameEngine.css'
 export { GameEngine } from './GameEngine'
 export { useGameController } from './useGameController'
 export {
+  GameLifecycleProvider,
+  useGameLifecycle,
+} from './GameLifecycle'
+export type {
+  GameLifecycle,
+  GameCompletionInfo,
+  GameLifecycleProviderProps,
+} from './GameLifecycle'
+export {
   defaultStorage,
   LocalStorageAdapter,
   InMemoryAdapter,

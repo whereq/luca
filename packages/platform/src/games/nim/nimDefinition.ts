@@ -5,7 +5,7 @@ import type {
 } from '@luca-game/engine'
 import {
   type NimState, type NimMove,
-  newNimGame, applyMove, isGameOver, playerWon, isValidMove,
+  newNimGame, applyMove, playerWon, isLoss, isValidMove,
   optimalMove,
 } from './nim'
 import { getGame } from '../../registry'
@@ -32,37 +32,21 @@ export function applyNimAction(
       if (!isValidMove(state, action.payload)) {
         return { state, consumed: false }
       }
-      const afterPlayer = applyMove(state, action.payload)
-      // Check if game is over after player move
-      if (isGameOver(afterPlayer)) {
-        return { state: afterPlayer, stats: { moves: 1 } }
+      // Player takes stones; if that emptied the board the player wins and
+      // the AI doesn't get to reply.
+      let s = applyMove(state, action.payload)
+      if (s.winner === null) {
+        // AI plays the optimal nim-sum move (a real opponent — the start
+        // position is a first-player win, so a careful human can still beat
+        // it; the Hint button shows the winning move).
+        const ai = optimalMove(s)
+        if (ai) s = applyMove(s, ai)
       }
-      // AI plays a random move
-      const aiMove = pickRandomMove(afterPlayer)
-      if (aiMove) {
-        const afterAi = applyMove(afterPlayer, aiMove)
-        return { state: afterAi, stats: { moves: 1 } }
-      }
-      return { state: afterPlayer, stats: { moves: 1 } }
+      return { state: s, stats: { moves: s.moves } }
     }
     case 'RESTART':
       return { state: newNimGame(), consumed: true }
   }
-}
-
-function pickRandomMove(state: NimState): NimMove | null {
-  const nonEmpty = state.piles
-    .map((count, idx) => ({ idx, count }))
-    .filter(p => p.count > 0)
-  if (nonEmpty.length === 0) return null
-  // 30% chance to play optimally; otherwise random
-  if (Math.random() < 0.3) {
-    const opt = optimalMove(state)
-    if (opt) return opt
-  }
-  const pile = nonEmpty[Math.floor(Math.random() * nonEmpty.length)]
-  const count = 1 + Math.floor(Math.random() * pile.count)
-  return { pile: pile.idx, count }
 }
 
 export const nimDefinition: GameDefinition<NimState, NimAction, NimStats> = {
@@ -71,7 +55,7 @@ export const nimDefinition: GameDefinition<NimState, NimAction, NimStats> = {
   initialState: initialNim,
   applyAction: applyNimAction,
   isWin: playerWon,
-  isLoss: (state) => isGameOver(state) && !playerWon(state),
+  isLoss,
 
   controls: {
     keyboard: {

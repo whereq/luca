@@ -5,7 +5,9 @@
 // the basic piece movement, no special moves, no checkmate detection.
 // The "win" is capturing the opponent's king.
 //
-// Educational version: 4 pieces per side, 6x6 board.
+// Standard 8x8 board, standard starting position. Orientation matches the
+// renderer's labels: row 0 = rank 8 (Black's back rank) at the top, row 7 =
+// rank 1 (White's back rank) at the bottom; files a..h map to columns 0..7.
 //
 // All exports are PURE FUNCTIONS. No React, no DOM.
 
@@ -19,13 +21,15 @@ export type ChessState = {
 }
 
 export const STARTING_BOARD: Square[][] = [
-  // 6x6 simplified
-  ['R', 'N', 'B', 'K', 'B', 'N'],
-  ['P', 'P', 'P', 'P', 'P', 'P'],
-  ['.', '.', '.', '.', '.', '.'],
-  ['.', '.', '.', '.', '.', '.'],
-  ['p', 'p', 'p', 'p', 'p', 'p'],
-  ['r', 'n', 'b', 'k', 'b', 'n'],
+  // Standard 8x8. Row 0 = rank 8 (Black), row 7 = rank 1 (White).
+  ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],  // rank 8 — Black back rank
+  ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],  // rank 7 — Black pawns
+  ['.', '.', '.', '.', '.', '.', '.', '.'],  // rank 6
+  ['.', '.', '.', '.', '.', '.', '.', '.'],  // rank 5
+  ['.', '.', '.', '.', '.', '.', '.', '.'],  // rank 4
+  ['.', '.', '.', '.', '.', '.', '.', '.'],  // rank 3
+  ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],  // rank 2 — White pawns
+  ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],  // rank 1 — White back rank
 ]
 
 export function newGame(): ChessState {
@@ -79,7 +83,8 @@ export function pieceMoves(state: ChessState, r: number, c: number): Array<[numb
     if (nr >= 0 && nr < state.board.length) {
       if (state.board[nr][c] === '.') {
         moves.push([nr, c])
-        const startR = turn === 'W' ? 1 : state.board.length - 2
+        // White pawns start on row length-2 (rank 2, bottom); Black on row 1 (rank 7, top).
+        const startR = turn === 'W' ? state.board.length - 2 : 1
         if (r === startR) {
           const nr2 = r + 2 * dir_p
           if (state.board[nr2][c] === '.') moves.push([nr2, c])

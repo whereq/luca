@@ -35,7 +35,7 @@
 .fruit-salad .fs-fruit-header {
   width: 48px;
   height: 48px;
-  border-radius: 8px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
@@ -64,7 +64,7 @@
 .fruit-salad .fs-bowl-label {
   width: 100%;
   height: 36px;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid transparent;
   color: inherit;
@@ -88,7 +88,7 @@
 .fruit-salad .fs-cell {
   width: 48px;
   height: 36px;
-  border-radius: 4px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: inherit;
@@ -124,6 +124,33 @@
   padding: 0 0.4rem;
 }
 
+/* A bowl/fruit total that the player has satisfied. */
+.fruit-salad .fs-bowl-sum.ok {
+  opacity: 1;
+  color: #22c55e;
+  font-weight: 700;
+}
+
+/* Filled (non-zero) cell — subtle emphasis. */
+.fruit-salad .fs-cell.filled {
+  background: rgba(79, 158, 255, 0.12);
+  border-color: rgba(79, 158, 255, 0.35);
+}
+
+/* Column-totals footer row. */
+.fruit-salad .fs-coltot-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+.fruit-salad .fs-coltot {
+  padding-top: 0.2rem;
+}
+
 .fruit-salad .fs-palette {
   display: flex;
   flex-direction: column;
@@ -131,7 +158,7 @@
   gap: 0.5rem;
   padding: 0.6rem 0.9rem;
   background: rgba(79, 158, 255, 0.08);
-  border-radius: 8px;
+  border-radius: var(--r-1);
 }
 
 .fruit-salad .fs-palette-label {
@@ -149,7 +176,7 @@
 .fruit-salad .fs-pal-btn {
   min-width: 30px;
   height: 30px;
-  border-radius: 4px;
+  border-radius: var(--r-1);
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.05);
   color: inherit;
@@ -182,7 +209,7 @@
   text-align: center;
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.9);
-  border-radius: 12px;
+  border-radius: var(--r-1);
   z-index: 10;
   animation: fs-result-appear 0.4s ease;
 }
@@ -199,7 +226,7 @@
   padding: 0.5rem 1.4rem;
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -220,7 +247,7 @@
 .fruit-salad .fs-onboard-inner {
   background: var(--bg, #1a1a1a);
   padding: 1.5rem 2rem;
-  border-radius: 12px;
+  border-radius: var(--r-1);
   max-width: 400px;
   text-align: center;
   display: flex;
@@ -237,7 +264,7 @@
   background: rgba(79, 158, 255, 0.9);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--r-1);
   cursor: pointer;
   font-weight: 500;
 }

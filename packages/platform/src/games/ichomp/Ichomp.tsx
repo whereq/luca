@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { GameEngine, type GameRenderContext } from '@luca-game/engine'
 import {
   type IchompState,
-  newGame, isLegal, isSolved, isLoss, isGameOver,
+  isLegal, isWin, isLoss, isGameOver, remainingCount,
 } from './ichomp'
 import type { IchompAction, IchompStats } from './ichompDefinition'
 import { ichompDefinition } from './ichompDefinition'
@@ -56,8 +56,8 @@ function IchompBoard({
   const isOver = isGameOver(state)
   // Don't gate on ctx.interactive — engine starts in 'idle' and
   // transitions to 'playing' on the first dispatch. We want the
-  // first click to be valid.
-  const interactive = !isOver
+  // first click to be valid. Only the player's turn is interactive.
+  const interactive = !isOver && state.turn === 'player'
 
   const handleClick = (r: number, c: number) => {
     if (!interactive) return
@@ -74,16 +74,18 @@ function IchompBoard({
         }}>
           <div className="ich-onboard-inner">
             <strong>{t('games.ichomp.name', 'iChomp')}</strong>
-            <p>{t('games.ichomp.onboard', 'Click a cell to eat it AND all cells above and to the right. The top-left is poisoned — eating it loses. Eat everything else to win.')}</p>
+            <p>{t('games.ichomp.onboard', 'Chomp vs the device. Click a cell to eat it and everything below & to the right. The top-left ☠ is poison — you and the AI take turns, and whoever is forced to eat it loses. You go first.')}</p>
             <button>{t('common.got_it', 'Got it')}</button>
           </div>
         </div>
       )}
 
       <div className="ich-info">
-        <span className="ich-label">{t('games.ichomp.remaining', 'Cells remaining:')}</span>
-        <span className="ich-value">
-          {state.grid.flat().filter(c => c).length} / {state.size * state.size - 1}
+        <span className="ich-label">{t('games.ichomp.remaining', 'Cells left:')}</span>
+        <span className="ich-value">{remainingCount(state)}</span>
+        <span className="ich-spacer" />
+        <span className="ich-turn">
+          {isOver ? '' : state.turn === 'player' ? t('games.ichomp.your_turn', 'Your turn') : t('games.ichomp.ai_turn', 'AI…')}
         </span>
       </div>
 
@@ -99,8 +101,8 @@ function IchompBoard({
                 key={`${r},${c}`}
                 className={`ich-cell ${present ? 'present' : 'eaten'} ${isPoison ? 'poison' : ''} ${isOver ? 'disabled' : ''}`}
                 onClick={() => handleClick(r, c)}
-                disabled={!interactive || !present || isPoison}
-                aria-label={`Row ${r + 1} column ${c + 1}${present ? '' : ' (eaten)'}`}
+                disabled={!interactive || !present}
+                aria-label={`Row ${r + 1} column ${c + 1}${isPoison ? ' (poison)' : ''}${present ? '' : ' (eaten)'}`}
               >
                 {isPoison ? '☠' : present ? '' : ''}
               </button>
@@ -110,15 +112,15 @@ function IchompBoard({
       </div>
 
       {isOver && (
-        <div className={`ich-result ${isSolved(state) ? 'won' : 'lost'}`}>
+        <div className={`ich-result ${isWin(state) ? 'won' : 'lost'}`}>
           <div className="ich-result-title">
-            {isSolved(state)
+            {isWin(state)
               ? '🏆 ' + t('games.ichomp.won', 'You won!')
               : '☠ ' + t('games.ichomp.lost', 'You ate the poison!')}
           </div>
           <div className="ich-result-msg">
-            {isSolved(state)
-              ? t('games.ichomp.won_msg', 'All non-poison cells eaten.')
+            {isWin(state)
+              ? t('games.ichomp.won_msg', 'You forced the AI to take the poison.')
               : t('games.ichomp.lost_msg', 'Avoid the top-left!')}
           </div>
           <button onClick={ctx.restart}>{t('common.play_again', 'Play again')}</button>

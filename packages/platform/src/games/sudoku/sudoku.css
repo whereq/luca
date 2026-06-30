@@ -443,7 +443,7 @@
 .sudoku-help-target {
   background: var(--rule-soft);
   padding: 8px 10px;
-  border-radius: var(--r-2);
+  border-radius: var(--r-1);
   margin: 8px 0 12px !important;
   font-size: 12px !important;
   color: var(--ink-muted) !important;
