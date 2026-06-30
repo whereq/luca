@@ -1,5 +1,13 @@
 # Luca — Games Completeness Audit
 
+> **✅ STATUS (2026-06-30): AUDIT COMPLETE + LOCKED WITH TESTS.** All 28 games reviewed —
+> 16 fixed/rebuilt, 12 verified-correct. No game is a stub or unwinnable. **Every fixed
+> game now has a `<slug>.test.ts`** guarding the specific bug + core mechanic; run them all
+> with `npm test` in `packages/platform` (currently **19 files · 135 passing**). Don't
+> re-audit; if you touch a game, update its test and run `npm test`. Shipped via v1.0.0.140
+> (see catobigato `docs/announcements/2026-06-30-v1.0.0.140-*`). Remaining follow-up =
+> Workstream B (JS↔Python conformance harness) in [[COMPLETION_WIRING_PLAN.md]].
+
 > **Goal:** every game in the collection is a *real, playable, winnable* game —
 > not a stub. Several were shipped as "educational simplified" placeholders
 > that are actually broken (fake mechanics, unwinnable, or wrong dimensions).

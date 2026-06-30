@@ -178,6 +178,7 @@ export const game2048Definition: GameDefinition<
   Board2048, Game2048Action, Game2048Stats
 > = {
   meta: getGame('2048')!,
+  serializeCompletion: (board) => board.map((row) => row.map((t) => t.value)),
 
   initialState: initial2048,
 

@@ -78,6 +78,7 @@ export function isLossSliding(state: Board): boolean {
 
 export const slidingBlocksDefinition: GameDefinition<Board, SlidingAction, SlidingStats> = {
   meta: getGame('sliding_blocks')!,
+  serializeCompletion: (b) => Array.from({ length: b.size }, (_, r) => b.cells.slice(r * b.size, (r + 1) * b.size)),
 
   initialState: initialSliding,
   applyAction: applySlidingAction,

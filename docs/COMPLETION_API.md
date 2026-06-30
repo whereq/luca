@@ -149,3 +149,55 @@ The platform ships optional validators:
 - `validateLights` — checks all cells are off
 
 Consumers can wire these into their backend or override with their own.
+
+## Canonical completion state (`serializeCompletion`)
+
+The state POSTed to `/complete` is the game's **canonical** state, not its rich
+in-memory state. A game whose engine state differs from what the validator
+expects declares a `serializeCompletion(state)` on its `GameDefinition`; the
+engine applies it before sending. Current serializers:
+
+| Game | In-memory state | Canonical (wire) state |
+|---|---|---|
+| 2048 | `Tile[][]` (objects) | `number[][]` grid |
+| sudoku | `{ puzzle, board, … }` | `board: number[][]` (9×9) |
+| sliding_blocks | `{ size, cells: 1D[], … }` | `number[][]` (size×size) |
+| tangram | `{ target, pieces, locked }` | `{ target:{cells}, pieces:[{id,cells}] }` |
+| lights, towers_of_hanoi | (already canonical) | identity |
+
+Validators (and conformance fixtures) operate on this canonical shape.
+
+## Conformance fixtures (JS ↔ Python parity)
+
+Each validated game ships a `<slug>/<slug>.cases.json` of shared test cases so
+the TS canonical logic and the Python validator port can't drift:
+
+```jsonc
+{
+  "game": "towers_of_hanoi",
+  "cases": [
+    {
+      "name": "solved (reported)",
+      "state": { "disks": 3, "pegs": { "A": [], "B": [], "C": [3,2,1] }, "moves": 7 },
+      "finalStats": { "moves": 7 },   // optional
+      "reportedComplete": true,
+      "difficulty": null,             // optional
+      "expect": { "complete": true, "errorCode": null }  // errorCode optional
+    }
+  ]
+}
+```
+
+`state` is the **canonical** completion state (above). Recommended cases per
+game: solved-reported, solved-under-reported, not-solved, cheat
+(reports-complete-but-not), malformed.
+
+Two runners check the **same** fixtures:
+
+- **TS** — `packages/platform/src/games/conformance.test.ts` (part of `npm test`):
+  the game's canonical solved-predicate must equal each case's `expect.complete`.
+- **Python** — `catobigato.com/backend/tests/luca/test_conformance.py`: the
+  registered validator's full verdict (`complete` + `error_code`) must match
+  `expect`.
+
+If both runners match the fixtures, the two implementations agree.

@@ -54,7 +54,9 @@ export function GameEngine<
       lifecycle.onComplete?.({
         slug: definition.meta.slug,
         status,
-        state,
+        // Send the canonical completion shape if the game provides one
+        // (e.g. 2048 tile-objects → number grid); else the state as-is.
+        state: definition.serializeCompletion ? definition.serializeCompletion(state) : state,
         stats,
         reportedComplete: status === 'won',
       })

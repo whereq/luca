@@ -109,14 +109,14 @@
   opacity: 0.7;
 }
 
-.skyscrapers .sk-pal...tons {
+.skyscrapers .sk-palette-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
   justify-content: center;
 }
 
-.skyscrapers .sk-pal-btn {
+.skyscrapers .sk-palette-btn {
   min-width: 30px;
   height: 30px;
   border-radius: var(--r-1);
@@ -130,17 +130,17 @@
   transition: all 0.1s ease;
 }
 
-.skyscrapers .sk-pal-btn:hover:not(:disabled) {
+.skyscrapers .sk-palette-btn:hover:not(:disabled) {
   background: rgba(79, 158, 255, 0.2);
   border-color: rgba(79, 158, 255, 0.6);
 }
 
-.skyscrapers .sk-pal-btn.sk-clear {
+.skyscrapers .sk-palette-btn.sk-clear {
   background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.4);
 }
 
-.skyscrapers .sk-pal-btn.sk-clear:hover {
+.skyscrapers .sk-palette-btn.sk-clear:hover {
   background: rgba(239, 68, 68, 0.3);
 }
 

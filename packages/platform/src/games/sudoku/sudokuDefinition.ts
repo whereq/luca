@@ -158,6 +158,7 @@ export function sudokuConflicts(state: SudokuState): boolean[][] {
 
 export const sudokuDefinition: GameDefinition<SudokuState, SudokuAction, SudokuStats> = {
   meta: getGame('sudoku')!,
+  serializeCompletion: (s) => s.board,
 
   initialState: () => initialSudoku('medium'),
   applyAction: applySudokuAction,

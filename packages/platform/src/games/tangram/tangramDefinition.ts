@@ -64,6 +64,7 @@ export function isLossTangram(_state: TangramState): boolean {
 
 export const tangramDefinition: GameDefinition<TangramState, TangramAction, TangramStats> = {
   meta: getGame('tangram')!,
+  serializeCompletion: (s) => ({ target: { cells: s.target.cells }, pieces: s.pieces.map((p) => ({ id: p.id, cells: p.cells })) }),
   initialState: initialTangram,
   applyAction: applyTangramAction,
   isWin: isWinTangram,

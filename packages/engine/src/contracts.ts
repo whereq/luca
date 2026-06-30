@@ -164,6 +164,13 @@ export interface GameDefinition<TState, TAction extends GameAction, TStats exten
     compute: (state: TState, sessionStats: TStats) => number | string
   }
 
+  /** Optional: convert the in-memory state into the canonical JSON shape sent
+   *  to the completion API (and consumed by the server-side validator). Use
+   *  this when the rich game state differs from what the validator expects —
+   *  e.g. 2048 stores tile objects but the validator wants a number grid.
+   *  Defaults to the state as-is. */
+  serializeCompletion?: (state: TState) => unknown
+
   /** Render the game board. The engine wraps this with header, stats,
    *  win/loss banners, help overlay. */
   render: (state: TState, ctx: GameRenderContext<TState, TAction, TStats>) => ReactNode
